@@ -23,7 +23,7 @@ return array(
 	 *
 	 * Set this to null to have it automatically detected.
 	 */
-	'base_url'  => 'passcurrent.local',
+	'base_url'  => 'http://passcurrent.local/',
 
 	/**
 	 * url_suffix - Any suffix that needs to be added to
