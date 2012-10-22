@@ -25,14 +25,22 @@
 
 			</div>
 		</div>
-		<div class="clearfix">
-			<?php echo Form::label('Identifier', 'identifier'); ?>
+        <div class="clearfix">
+            <?php echo Form::label('Pass Type Identifier', 'pass_type_identifier'); ?>
 
-			<div class="input">
-				<?php echo Form::input('identifier', Input::post('identifier', isset($pass) ? $pass->identifier : ''), array('class' => 'span4')); ?>
+            <div class="input">
+                <?php echo Form::input('pass_type_identifier', Input::post('pass_type_identifier', isset($pass) ? $pass->pass_type_identifier : ''), array('class' => 'span4')); ?>
 
-			</div>
-		</div>
+            </div>
+        </div>
+        <div class="clearfix">
+            <?php echo Form::label('Team Identifier', 'team_identifier'); ?>
+
+            <div class="input">
+                <?php echo Form::input('team_identifier', Input::post('team_identifier', isset($pass) ? $pass->team_identifier : ''), array('class' => 'span4')); ?>
+
+            </div>
+        </div>
 		<div class="clearfix">
 			<?php echo Form::label('Background color', 'background_color'); ?>
 

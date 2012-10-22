@@ -31,7 +31,8 @@ class Controller_Admin_Pass extends Controller_Admin
                                                'title' => Input::post('title'),
                                                'description' => Input::post('description'),
                                                'logo_text' => Input::post('logo_text'),
-                                               'identifier' => Input::post('identifier'),
+                                               'pass_type_identifier' => Input::post('pass_type_identifier'),
+                                               'team_identifier' => Input::post('team_identifier'),
                                                'background_color' => Input::post('background_color'),
                                                'foreground_color' => Input::post('foreground_color'),
                                                'label_color' => Input::post('label_color'),
@@ -48,8 +49,8 @@ class Controller_Admin_Pass extends Controller_Admin
                                                'strip2x' => Input::post('strip2x'),
                                                'barcode_message' => Input::post('barcode_message'),
                                                'barcode_format' => Input::post('barcode_format'),
-                                               'offer_label' => \Fuel\Core\Input::post('offer_label'),
-                                               'offer_value' => \Fuel\Core\Input::post('offer_value'),
+                                               'offer_label' => Input::post('offer_label'),
+                                               'offer_value' => Input::post('offer_value'),
                                           ));
 
                 if ($pass and $pass->save())
@@ -85,7 +86,8 @@ class Controller_Admin_Pass extends Controller_Admin
             $pass->title = Input::post('title');
             $pass->description = Input::post('description');
             $pass->logo_text = Input::post('logo_text');
-            $pass->identifier = Input::post('identifier');
+            $pass->pass_type_identifier = Input::post('pass_type_identifier');
+            $pass->team_identifier = Input::post('team_identifier');
             $pass->background_color = Input::post('background_color');
             $pass->foreground_color = Input::post('foreground_color');
             $pass->label_color = Input::post('label_color');
@@ -125,7 +127,8 @@ class Controller_Admin_Pass extends Controller_Admin
                 $pass->title = $val->validated('title');
                 $pass->description = $val->validated('description');
                 $pass->logo_text = $val->validated('logo_text');
-                $pass->identifier = $val->validated('identifier');
+                $pass->pass_type_identifier = $val->validated('pass_type_identifier');
+                $pass->team_identifier = $val->validated('team_identifier');
                 $pass->background_color = $val->validated('background_color');
                 $pass->foreground_color = $val->validated('foreground_color');
                 $pass->label_color = $val->validated('label_color');

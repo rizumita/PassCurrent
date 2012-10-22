@@ -7,7 +7,8 @@
 			<th>Title</th>
 			<th>Description</th>
 			<th>Logo text</th>
-			<th>Identifier</th>
+            <th>Pass Type Identifier</th>
+            <th>Team Identifier</th>
 			<th>Background color</th>
 			<th>Foreground color</th>
 			<th>Label color</th>
@@ -23,7 +24,9 @@
 			<th>Strip</th>
 			<th>Strip2x</th>
 			<th>Barcode message</th>
-			<th>Barcode format</th>
+            <th>Barcode format</th>
+            <th>Offer label</th>
+            <th>Offer value</th>
 			<th></th>
 		</tr>
 	</thead>
@@ -33,7 +36,8 @@
 			<td><?php echo $pass->title; ?></td>
 			<td><?php echo $pass->description; ?></td>
 			<td><?php echo $pass->logo_text; ?></td>
-			<td><?php echo $pass->identifier; ?></td>
+            <td><?php echo $pass->pass_type_identifier; ?></td>
+            <td><?php echo $pass->team_identifier; ?></td>
 			<td><?php echo $pass->background_color; ?></td>
 			<td><?php echo $pass->foreground_color; ?></td>
 			<td><?php echo $pass->label_color; ?></td>
@@ -49,7 +53,9 @@
 			<td><?php echo $pass->strip; ?></td>
 			<td><?php echo $pass->strip2x; ?></td>
 			<td><?php echo $pass->barcode_message; ?></td>
-			<td><?php echo $pass->barcode_format; ?></td>
+            <td><?php echo $pass->barcode_format; ?></td>
+            <td><?php echo $pass->offer_label; ?></td>
+            <td><?php echo $pass->offer_value; ?></td>
 			<td>
 				<?php echo Html::anchor('admin/pass/view/'.$pass->id, 'View'); ?> |
 				<?php echo Html::anchor('admin/pass/edit/'.$pass->id, 'Edit'); ?> |

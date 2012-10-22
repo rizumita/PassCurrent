@@ -10,7 +10,8 @@ class Model_Pass extends \Orm\Model
         'title',
         'description',
         'logo_text',
-        'identifier',
+        'pass_type_identifier',
+        'team_identifier',
         'background_color',
         'foreground_color',
         'label_color',
@@ -29,6 +30,7 @@ class Model_Pass extends \Orm\Model
         'barcode_format',
         'offer_value',
         'offer_label',
+        'cert_path',
         'created_at',
         'updated_at',
     );
@@ -50,7 +52,8 @@ class Model_Pass extends \Orm\Model
         $val->add_field('title', 'Title', 'required|max_length[255]');
         $val->add_field('description', 'Description', '');
         $val->add_field('logo_text', 'Logo Text', 'required|max_length[255]');
-        $val->add_field('identifier', 'Identifier', 'required|max_length[255]');
+        $val->add_field('pass_type_identifier', 'Pass Type Identifier', 'required|max_length[255]');
+        $val->add_field('team_identifier', 'Team Identifier', 'required|max_length[255]');
         $val->add_field('background_color', 'Background Color', 'max_length[255]');
         $val->add_field('foreground_color', 'Foreground Color', 'max_length[255]');
         $val->add_field('label_color', 'Label Color', 'max_length[255]');
@@ -69,6 +72,7 @@ class Model_Pass extends \Orm\Model
         $val->add_field('barcode_format', 'Barcode Format', 'valid_string[numeric]');
         $val->add_field('offer_value', 'Offer Value', 'required|max_length[255]');
         $val->add_field('offer_label', 'Offer Label', 'required|max_length[255]');
+        $val->add_field('cert_path', 'Certification PATH', 'max_length[1023]');
 
         return $val;
     }
@@ -77,9 +81,9 @@ class Model_Pass extends \Orm\Model
     {
         $array = array(
             'formatVersion' => 1,
-            'passTypeIdentifier' => $this->identifier,
+            'passTypeIdentifier' => $this->pass_type_identifier,
+            'teamIdentifier' => $this->team_identifier,
             'serialNumber' => '001',
-            'teamIdentifier' => '',
             'organizationName' => '',
             'description' => $this->description,
             'logoText' => $this->logo_text,

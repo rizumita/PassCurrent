@@ -10,8 +10,11 @@
 	<strong>Logo text:</strong>
 	<?php echo $pass->logo_text; ?></p>
 <p>
-	<strong>Identifier:</strong>
-	<?php echo $pass->identifier; ?></p>
+    <strong>Pass Type Identifier:</strong>
+    <?php echo $pass->pass_type_identifier; ?></p>
+<p>
+    <strong>Team Identifier:</strong>
+    <?php echo $pass->team_identifier; ?></p>
 <p>
 	<strong>Background color:</strong>
 	<?php echo $pass->background_color; ?></p>
@@ -60,6 +63,12 @@
 <p>
 	<strong>Barcode format:</strong>
 	<?php echo $pass->barcode_format; ?></p>
+<p>
+    <strong>Offer label:</strong>
+    <?php echo $pass->offer_label; ?></p>
+<p>
+    <strong>Offer value:</strong>
+    <?php echo $pass->offer_value; ?></p>
 
 <?php echo Html::anchor('admin/pass/edit/'.$pass->id, 'Edit'); ?> |
 <?php echo Html::anchor('admin/pass', 'Back'); ?>

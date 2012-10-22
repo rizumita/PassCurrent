@@ -17,7 +17,8 @@ class PassTest extends \Fuel\Core\TestCase
     public function test_pass_json()
     {
         $pass = Model_Pass::forge(array('title'=>'test title',
-                                        'identifier'=>'pass.jp.caph.test-coupon',
+                                        'pass_type_identifier'=>'pass.jp.caph.test-coupon',
+                                        'team_identifier' => 'xxxxxxxxx',
                                         'description'=>'desc',
                                         'logo_text'=>'sample',
                                         'barcode_message'=>'message',
@@ -32,6 +33,7 @@ class PassTest extends \Fuel\Core\TestCase
         $this->assertRegExp('/\{.*"formatVersion":1.*\}/', $pass->pass_json());
         $this->assertRegExp('/\{.*"serialNumber":"001".*\}/', $pass->pass_json());
         $this->assertRegExp('/\{.*"passTypeIdentifier":"pass\.jp\.caph\.test-coupon".*\}/', $pass->pass_json());
+        $this->assertRegExp('/\{.*"teamIdentifier":"xxxxxxxxx".*\}/', $pass->pass_json());
         $this->assertRegExp('/\{.*"description":"desc".*\}/', $pass->pass_json());
         $this->assertRegExp('/\{.*"logoText":"sample".*\}/', $pass->pass_json());
         $this->assertRegExp('/\{.*"barcode":\{"message":"message","format":"PKBarcodeFormatQR","messageEncoding":"UTF-8"\}.*\}/', $pass->pass_json());
