@@ -22,6 +22,8 @@
 			<th>Icon2x</th>
 			<th>Strip</th>
 			<th>Strip2x</th>
+			<th>Barcode message</th>
+			<th>Barcode format</th>
 			<th></th>
 		</tr>
 	</thead>
@@ -46,6 +48,8 @@
 			<td><?php echo $pass->icon2x; ?></td>
 			<td><?php echo $pass->strip; ?></td>
 			<td><?php echo $pass->strip2x; ?></td>
+			<td><?php echo $pass->barcode_message; ?></td>
+			<td><?php echo $pass->barcode_format; ?></td>
 			<td>
 				<?php echo Html::anchor('admin/pass/view/'.$pass->id, 'View'); ?> |
 				<?php echo Html::anchor('admin/pass/edit/'.$pass->id, 'Edit'); ?> |

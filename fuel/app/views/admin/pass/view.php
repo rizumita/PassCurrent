@@ -54,6 +54,12 @@
 <p>
 	<strong>Strip2x:</strong>
 	<?php echo $pass->strip2x; ?></p>
+<p>
+	<strong>Barcode message:</strong>
+	<?php echo $pass->barcode_message; ?></p>
+<p>
+	<strong>Barcode format:</strong>
+	<?php echo $pass->barcode_format; ?></p>
 
 <?php echo Html::anchor('admin/pass/edit/'.$pass->id, 'Edit'); ?> |
 <?php echo Html::anchor('admin/pass', 'Back'); ?>

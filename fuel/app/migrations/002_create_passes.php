@@ -26,6 +26,10 @@ class Create_passes
 			'icon2x' => array('constraint' => 255, 'type' => 'varchar', 'null' => true),
 			'strip' => array('constraint' => 255, 'type' => 'varchar', 'null' => true),
 			'strip2x' => array('constraint' => 255, 'type' => 'varchar', 'null' => true),
+			'barcode_message' => array('constraint' => 255, 'type' => 'varchar'),
+			'barcode_format' => array('constraint' => 11, 'type' => 'int'),
+            'offer_label' => array('constraint' => 255, 'type' => 'varchar'),
+            'offer_value' => array('constraint' => 255, 'type' => 'varchar'),
 			'created_at' => array('constraint' => 11, 'type' => 'int'),
 			'updated_at' => array('constraint' => 11, 'type' => 'int'),
 
