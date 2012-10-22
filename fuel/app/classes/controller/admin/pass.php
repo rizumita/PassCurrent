@@ -53,13 +53,19 @@ class Controller_Admin_Pass extends Controller_Admin
                                                'offer_value' => Input::post('offer_value'),
                                           ));
 
-                if ($pass and $pass->save())
+                $upload_result = $pass->get_upload_files();
+                $error_upload = count($upload_result) > 0;
+
+                if ($error_upload)
+                {
+                    Session::set_flash('error', $upload_result);
+                }
+                elseif ($pass and $pass->save())
                 {
                     Session::set_flash('success', e('Added pass #' . $pass->id . '.'));
 
                     Response::redirect('admin/pass');
                 }
-
                 else
                 {
                     Session::set_flash('error', e('Could not save pass.'));
@@ -107,7 +113,15 @@ class Controller_Admin_Pass extends Controller_Admin
             $pass->offer_label = \Fuel\Core\Input::post('offer_label');
             $pass->offer_value = \Fuel\Core\Input::post('offer_value');
 
-            if ($pass->save())
+            $upload_result = $pass->get_upload_files();
+            $error_upload = count($upload_result) > 0;
+
+            if ($error_upload)
+            {
+                Session::set_flash('error', $upload_result);
+                $this->template->set_global('pass', $pass, false);
+            }
+            elseif ($pass->save())
             {
                 Session::set_flash('success', e('Updated pass #' . $id));
 

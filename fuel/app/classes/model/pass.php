@@ -30,7 +30,7 @@ class Model_Pass extends \Orm\Model
         'barcode_format',
         'offer_value',
         'offer_label',
-        'cert_path',
+        'cert_name',
         'created_at',
         'updated_at',
     );
@@ -57,9 +57,9 @@ class Model_Pass extends \Orm\Model
         $val->add_field('background_color', 'Background Color', 'max_length[255]');
         $val->add_field('foreground_color', 'Foreground Color', 'max_length[255]');
         $val->add_field('label_color', 'Label Color', 'max_length[255]');
-        $val->add_field('altitude', 'Altitude', '');
-        $val->add_field('latitude', 'Latitude', '');
-        $val->add_field('longitude', 'Longitude', '');
+//        $val->add_field('altitude', 'Altitude', '');
+//        $val->add_field('latitude', 'Latitude', '');
+//        $val->add_field('longitude', 'Longitude', '');
         $val->add_field('relevant_text', 'Relevant Text', 'max_length[255]');
         $val->add_field('signature', 'Signature', 'max_length[255]');
         $val->add_field('logo', 'Logo', 'max_length[255]');
@@ -72,7 +72,7 @@ class Model_Pass extends \Orm\Model
         $val->add_field('barcode_format', 'Barcode Format', 'valid_string[numeric]');
         $val->add_field('offer_value', 'Offer Value', 'required|max_length[255]');
         $val->add_field('offer_label', 'Offer Label', 'required|max_length[255]');
-        $val->add_field('cert_path', 'Certification PATH', 'max_length[1023]');
+        $val->add_field('cert_name', 'Certification Name', 'max_length[255]');
 
         return $val;
     }
@@ -133,5 +133,65 @@ class Model_Pass extends \Orm\Model
         {
             return 'PKBarcodeFormatAztec';
         }
+    }
+
+    public function get_upload_files()
+    {
+        \Fuel\Core\File::create_dir(\Fuel\Core\Config::get('pass.files_dir'), $this->id);
+
+        $config = array(
+            'path' => \Fuel\Core\Config::get('pass.files_dir') . DS . $this->id,
+            'ext_whitelist' => array('p12'),
+        );
+
+        \Fuel\Core\Upload::process($config);
+
+        if (\Fuel\Core\Upload::is_valid())
+        {
+            \Fuel\Core\Upload::save();
+            $files = \Fuel\Core\Upload::get_files();
+            foreach ($files as $file)
+            {
+                if ($file['field'] == 'cert_file')
+                {
+                    $this->set_cert_name($file['saved_as']);
+                }
+            }
+
+            return array();
+        }
+        else
+        {
+            $errors = \Fuel\Core\Upload::get_errors();
+            foreach ($errors as $error)
+            {
+                if ($error['field'] == 'cert_file')
+                {
+                    $result[] = 'Error Certification File Upload';
+                }
+            }
+
+            return $result;
+        }
+    }
+
+    public function files_dir_path()
+    {
+        return \Fuel\Core\Config::get('pass.files_dir') . DS . $this->id;
+    }
+
+    public function cert_path()
+    {
+        return $this->files_dir_path() . DS . $this->cert_name;
+    }
+
+    public function set_cert_name($new_cert_name)
+    {
+        if (file_exists($this->cert_path()))
+        {
+            \Fuel\Core\File::delete($this->cert_path());
+        }
+
+        $this->cert_name = $new_cert_name;
     }
 }

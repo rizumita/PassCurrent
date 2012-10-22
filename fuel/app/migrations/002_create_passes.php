@@ -31,7 +31,7 @@ class Create_passes
 			'barcode_format' => array('constraint' => 11, 'type' => 'int'),
             'offer_label' => array('constraint' => 255, 'type' => 'varchar'),
             'offer_value' => array('constraint' => 255, 'type' => 'varchar'),
-            'cert_path' => array('constraint' => 1023, 'type' => 'varchar', 'null' => true),
+            'cert_name' => array('constraint' => 1023, 'type' => 'varchar', 'null' => true),
 			'created_at' => array('constraint' => 11, 'type' => 'int'),
 			'updated_at' => array('constraint' => 11, 'type' => 'int'),
 
