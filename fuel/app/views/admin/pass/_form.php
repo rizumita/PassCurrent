@@ -118,7 +118,7 @@
     <?php echo Form::label('Logo', 'logo'); ?>
 
     <div class="input">
-        <?php echo Form::input('logo', Input::post('logo', isset($pass) ? $pass->logo : ''), array('class' => 'span4')); ?>
+        <?php echo \Fuel\Core\Form::file('logo_file'); ?>
 
     </div>
 </div>

@@ -191,5 +191,13 @@ class Controller_Admin_Pass extends Controller_Admin
 
     }
 
+    public function action_location($id = null)
+    {
+        $pass = Model_Pass::find($id);
+
+        $this->template->set_global('pass', $pass, false);
+        $this->template->title = "Pass Location";
+        $this->template->content = View::forge('admin/pass/location');
+    }
 
 }

@@ -2,74 +2,39 @@
 <br>
 <?php if ($passes): ?>
 <table class="table table-striped">
-	<thead>
-		<tr>
-			<th>Title</th>
-			<th>Description</th>
-			<th>Logo text</th>
-            <th>Pass Type Identifier</th>
-            <th>Team Identifier</th>
-			<th>Background color</th>
-			<th>Foreground color</th>
-			<th>Label color</th>
-			<th>Altitude</th>
-			<th>Latitude</th>
-			<th>Longitude</th>
-			<th>Relevant text</th>
-			<th>Signature</th>
-			<th>Logo</th>
-			<th>Logo2x</th>
-			<th>Icon</th>
-			<th>Icon2x</th>
-			<th>Strip</th>
-			<th>Strip2x</th>
-			<th>Barcode message</th>
-            <th>Barcode format</th>
-            <th>Offer label</th>
-            <th>Offer value</th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody>
-<?php foreach ($passes as $pass): ?>		<tr>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Certificate File</th>
+        <th>Image Files</th>
+        <th>Location</th>
+        <th>Status</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($passes as $pass): ?>
+    <tr>
 
-			<td><?php echo $pass->title; ?></td>
-			<td><?php echo $pass->description; ?></td>
-			<td><?php echo $pass->logo_text; ?></td>
-            <td><?php echo $pass->pass_type_identifier; ?></td>
-            <td><?php echo $pass->team_identifier; ?></td>
-			<td><?php echo $pass->background_color; ?></td>
-			<td><?php echo $pass->foreground_color; ?></td>
-			<td><?php echo $pass->label_color; ?></td>
-			<td><?php echo $pass->altitude; ?></td>
-			<td><?php echo $pass->latitude; ?></td>
-			<td><?php echo $pass->longitude; ?></td>
-			<td><?php echo $pass->relevant_text; ?></td>
-			<td><?php echo $pass->signature; ?></td>
-			<td><?php echo $pass->logo; ?></td>
-			<td><?php echo $pass->logo2x; ?></td>
-			<td><?php echo $pass->icon; ?></td>
-			<td><?php echo $pass->icon2x; ?></td>
-			<td><?php echo $pass->strip; ?></td>
-			<td><?php echo $pass->strip2x; ?></td>
-			<td><?php echo $pass->barcode_message; ?></td>
-            <td><?php echo $pass->barcode_format; ?></td>
-            <td><?php echo $pass->offer_label; ?></td>
-            <td><?php echo $pass->offer_value; ?></td>
-			<td>
-				<?php echo Html::anchor('admin/pass/view/'.$pass->id, 'View'); ?> |
-				<?php echo Html::anchor('admin/pass/edit/'.$pass->id, 'Edit'); ?> |
-				<?php echo Html::anchor('admin/pass/delete/'.$pass->id, 'Delete', array('onclick' => "return confirm('Are you sure?')")); ?>
+        <td><?php echo $pass->title; ?></td>
+        <td><?php echo \Fuel\Core\Html::anchor('admin/pass/cert_upload/' . $pass->id, 'Upload') ?></td>
+        <td><?php echo \Fuel\Core\Html::anchor('admin/pass/images_upload/' . $pass->id, 'Upload') ?></td>
+        <td><?php echo \Fuel\Core\Html::anchor('admin/pass/location/' . $pass->id, 'Configure') ?></td>
+        <td><?php echo $pass->status(); ?></td>
+        <td>
+            <?php echo Html::anchor('admin/pass/view/' . $pass->id, 'View'); ?> |
+            <?php echo Html::anchor('admin/pass/edit/' . $pass->id, 'Edit'); ?> |
+            <?php echo Html::anchor('admin/pass/delete/' . $pass->id, 'Delete', array('onclick' => "return confirm('Are you sure?')")); ?>
 
-			</td>
-		</tr>
-<?php endforeach; ?>	</tbody>
+        </td>
+    </tr>
+        <?php endforeach; ?>    </tbody>
 </table>
 
 <?php else: ?>
 <p>No Passes.</p>
 
 <?php endif; ?><p>
-	<?php echo Html::anchor('admin/pass/create', 'Add new Pass', array('class' => 'btn btn-success')); ?>
+    <?php echo Html::anchor('admin/pass/create', 'Add new Pass', array('class' => 'btn btn-success')); ?>
 
 </p>

@@ -194,4 +194,9 @@ class Model_Pass extends \Orm\Model
 
         $this->cert_name = $new_cert_name;
     }
+
+    public function status()
+    {
+        return '';
+    }
 }
