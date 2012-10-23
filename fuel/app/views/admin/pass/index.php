@@ -4,7 +4,7 @@
 <table class="table table-striped">
     <thead>
     <tr>
-        <th>Title</th>
+        <th>Name</th>
         <th>Certificate File</th>
         <th>Image Files</th>
         <th>Location</th>
@@ -16,9 +16,9 @@
         <?php foreach ($passes as $pass): ?>
     <tr>
 
-        <td><?php echo $pass->title; ?></td>
-        <td><?php echo \Fuel\Core\Html::anchor('admin/pass/cert_upload/' . $pass->id, 'Upload') ?></td>
-        <td><?php echo \Fuel\Core\Html::anchor('admin/pass/images_upload/' . $pass->id, 'Upload') ?></td>
+        <td><?php echo $pass->name; ?></td>
+        <td><?php echo \Fuel\Core\Html::anchor('admin/pass/cert/' . $pass->id, 'Configure') ?></td>
+        <td><?php echo \Fuel\Core\Html::anchor('admin/pass/images/' . $pass->id, 'Upload') ?></td>
         <td><?php echo \Fuel\Core\Html::anchor('admin/pass/locations/' . $pass->id, 'Configure') ?></td>
         <td><?php echo $pass->status(); ?></td>
         <td>

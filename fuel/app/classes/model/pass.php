@@ -7,7 +7,7 @@ class Model_Pass extends \Orm\Model
 
     protected static $_properties = array(
         'id',
-        'title',
+        'name',
         'description',
         'logo_text',
         'pass_type_identifier',
@@ -55,7 +55,7 @@ class Model_Pass extends \Orm\Model
     public static function validate($factory)
     {
         $val = Validation::forge($factory);
-        $val->add_field('title', 'Title', 'required|max_length[255]');
+        $val->add_field('name', 'Name', 'required|max_length[255]');
 //        $val->add_field('description', 'Description', '');
         $val->add_field('logo_text', 'Logo Text', 'required|max_length[255]');
         $val->add_field('pass_type_identifier', 'Pass Type Identifier', 'required|max_length[255]');
@@ -137,19 +137,24 @@ class Model_Pass extends \Orm\Model
         }
     }
 
-    public function get_upload_files()
+    public function prepare_files_dir()
     {
         if (!file_exists($this->files_dir_path()))
         {
             \Fuel\Core\File::create_dir(\Fuel\Core\Config::get('pass.files_dir'), $this->id);
         }
+    }
+
+    public function get_upload_files()
+    {
+        $this->prepare_files_dir();
+
+        $result = array();
 
         $config = array(
             'path' => \Fuel\Core\Config::get('pass.files_dir') . DS . $this->id,
             'ext_whitelist' => array('p12'),
         );
-
-        $result = array();
 
         \Fuel\Core\Upload::process($config);
 
@@ -159,9 +164,10 @@ class Model_Pass extends \Orm\Model
             $files = \Fuel\Core\Upload::get_files();
             foreach ($files as $file)
             {
-                if ($file['field'] == 'cert_file')
+                if ($file['field'] == 'cert')
                 {
-                    $this->set_cert_name($file['saved_as']);
+                    $this->remove_old_certificate();
+                    $this->cert_name = $file['saved_as'];
                 }
             }
         }
@@ -170,9 +176,9 @@ class Model_Pass extends \Orm\Model
             $errors = \Fuel\Core\Upload::get_errors();
             foreach ($errors as $error)
             {
-                if ($error['field'] == 'cert_file')
+                if ($error['field'] == 'cert')
                 {
-                    $result[] = 'Error Certification File Upload';
+                    $result[] = 'Error Certificate Upload';
                 }
             }
         }
@@ -190,18 +196,21 @@ class Model_Pass extends \Orm\Model
         return $this->files_dir_path() . DS . $this->cert_name;
     }
 
-    public function set_cert_name($new_cert_name)
+    public function status()
     {
+        return '';
+    }
+
+    public function remove_old_certificate()
+    {
+        if (empty($this->cert_name))
+        {
+            return;
+        }
+
         if (file_exists($this->cert_path()))
         {
             \Fuel\Core\File::delete($this->cert_path());
         }
-
-        $this->cert_name = $new_cert_name;
-    }
-
-    public function status()
-    {
-        return '';
     }
 }

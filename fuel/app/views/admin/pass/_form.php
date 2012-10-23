@@ -2,10 +2,10 @@
 
 <fieldset>
 <div class="clearfix">
-    <?php echo Form::label('Title', 'title'); ?>
+    <?php echo Form::label('Name', 'name'); ?>
 
     <div class="input">
-        <?php echo Form::input('title', Input::post('title', isset($pass) ? $pass->title : ''), array('class' => 'span4')); ?>
+        <?php echo Form::input('name', Input::post('name', isset($pass) ? $pass->name : ''), array('class' => 'span4')); ?>
 
     </div>
 </div>

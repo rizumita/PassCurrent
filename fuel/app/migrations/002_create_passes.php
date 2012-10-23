@@ -8,7 +8,7 @@ class Create_passes
 	{
 		\DBUtil::create_table('passes', array(
 			'id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true),
-			'title' => array('constraint' => 255, 'type' => 'varchar'),
+			'name' => array('constraint' => 255, 'type' => 'varchar'),
 			'description' => array('type' => 'text', 'null' => true),
 			'logo_text' => array('constraint' => 255, 'type' => 'varchar'),
             'pass_type_identifier' => array('constraint' => 255, 'type' => 'varchar'),

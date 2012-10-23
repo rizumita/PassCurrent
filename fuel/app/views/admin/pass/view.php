@@ -1,8 +1,8 @@
 <h2>Viewing #<?php echo $pass->id; ?></h2>
 
 <p>
-	<strong>Title:</strong>
-	<?php echo $pass->title; ?></p>
+	<strong>Name:</strong>
+	<?php echo $pass->name; ?></p>
 <p>
 	<strong>Description:</strong>
 	<?php echo $pass->description; ?></p>

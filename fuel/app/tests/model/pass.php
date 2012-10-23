@@ -65,7 +65,7 @@ class PassTest extends \Fuel\Core\TestCase
         $this->assertEquals(\Fuel\Core\Config::get('pass.files_dir') . DS . $pass->id . DS . 'testcert.p12', $pass->cert_path());
     }
 
-    public function test_set_cert_name()
+    public function test_remove_old_certificate()
     {
         $pass = Model_Pass::forge(array('cert_name' => 'testcert.p12'));
 
@@ -73,11 +73,9 @@ class PassTest extends \Fuel\Core\TestCase
 
         $this->assertTrue(file_exists($pass->cert_path()));
 
-        $pass->set_cert_name('newcert.p12');
+        $pass->remove_old_certificate();
 
         $this->assertFalse(file_exists($pass->cert_path()));
-
-        $this->assertEquals('newcert.p12', $pass->cert_name);
     }
 
 }
