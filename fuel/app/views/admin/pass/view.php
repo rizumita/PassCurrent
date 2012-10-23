@@ -25,18 +25,6 @@
 	<strong>Label color:</strong>
 	<?php echo $pass->label_color; ?></p>
 <p>
-	<strong>Altitude:</strong>
-	<?php echo $pass->altitude; ?></p>
-<p>
-	<strong>Latitude:</strong>
-	<?php echo $pass->latitude; ?></p>
-<p>
-	<strong>Longitude:</strong>
-	<?php echo $pass->longitude; ?></p>
-<p>
-	<strong>Relevant text:</strong>
-	<?php echo $pass->relevant_text; ?></p>
-<p>
 	<strong>Signature:</strong>
 	<?php echo $pass->signature; ?></p>
 <p>

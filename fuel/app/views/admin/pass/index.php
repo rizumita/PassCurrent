@@ -19,7 +19,7 @@
         <td><?php echo $pass->title; ?></td>
         <td><?php echo \Fuel\Core\Html::anchor('admin/pass/cert_upload/' . $pass->id, 'Upload') ?></td>
         <td><?php echo \Fuel\Core\Html::anchor('admin/pass/images_upload/' . $pass->id, 'Upload') ?></td>
-        <td><?php echo \Fuel\Core\Html::anchor('admin/pass/location/' . $pass->id, 'Configure') ?></td>
+        <td><?php echo \Fuel\Core\Html::anchor('admin/pass/locations/' . $pass->id, 'Configure') ?></td>
         <td><?php echo $pass->status(); ?></td>
         <td>
             <?php echo Html::anchor('admin/pass/view/' . $pass->id, 'View'); ?> |

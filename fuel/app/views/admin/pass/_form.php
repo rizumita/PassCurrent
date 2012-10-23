@@ -42,14 +42,14 @@
 
     </div>
 </div>
-<div class="clearfix">
-    <?php echo Form::label('Certification File', 'cert_file'); ?>
-
-    <?php echo Input::post('cert_name', isset($pass) ? $pass->cert_name : 'No uploaded file.'); ?>
-    <div class="input">
-        <?php echo \Fuel\Core\Form::file('cert_file'); ?>
-    </div>
-</div>
+<!--<div class="clearfix">-->
+<!--    --><?php //echo Form::label('Certification File', 'cert_file'); ?>
+<!---->
+<!--    --><?php //echo Input::post('cert_name', isset($pass) ? $pass->cert_name : 'No uploaded file.'); ?>
+<!--    <div class="input">-->
+<!--        --><?php //echo \Fuel\Core\Form::file('cert_file'); ?>
+<!--    </div>-->
+<!--</div>-->
 <div class="clearfix">
     <?php echo Form::label('Background color', 'background_color'); ?>
 
@@ -71,38 +71,6 @@
 
     <div class="input">
         <?php echo Form::input('label_color', Input::post('label_color', isset($pass) ? $pass->label_color : ''), array('class' => 'span4')); ?>
-
-    </div>
-</div>
-<div class="clearfix">
-    <?php echo Form::label('Altitude', 'altitude'); ?>
-
-    <div class="input">
-        <?php echo Form::input('altitude', Input::post('altitude', isset($pass) ? $pass->altitude : ''), array('class' => 'span4')); ?>
-
-    </div>
-</div>
-<div class="clearfix">
-    <?php echo Form::label('Latitude', 'latitude'); ?>
-
-    <div class="input">
-        <?php echo Form::input('latitude', Input::post('latitude', isset($pass) ? $pass->latitude : ''), array('class' => 'span4')); ?>
-
-    </div>
-</div>
-<div class="clearfix">
-    <?php echo Form::label('Longitude', 'longitude'); ?>
-
-    <div class="input">
-        <?php echo Form::input('longitude', Input::post('longitude', isset($pass) ? $pass->longitude : ''), array('class' => 'span4')); ?>
-
-    </div>
-</div>
-<div class="clearfix">
-    <?php echo Form::label('Relevant text', 'relevant_text'); ?>
-
-    <div class="input">
-        <?php echo Form::input('relevant_text', Input::post('relevant_text', isset($pass) ? $pass->relevant_text : ''), array('class' => 'span4')); ?>
 
     </div>
 </div>

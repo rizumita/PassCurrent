@@ -15,10 +15,6 @@ class Model_Pass extends \Orm\Model
         'background_color',
         'foreground_color',
         'label_color',
-        'altitude',
-        'latitude',
-        'longitude',
-        'relevant_text',
         'signature',
         'logo',
         'logo2x',
@@ -33,6 +29,16 @@ class Model_Pass extends \Orm\Model
         'cert_name',
         'created_at',
         'updated_at',
+    );
+
+    protected static $_has_many = array(
+        'locations' => array(
+            'key_from' => 'id',
+            'model_to' => 'Model_Location',
+            'key_to' => 'pass_id',
+            'cascade_save' => true,
+            'cascade_delete' => true,
+        )
     );
 
     protected static $_observers = array(
@@ -50,17 +56,13 @@ class Model_Pass extends \Orm\Model
     {
         $val = Validation::forge($factory);
         $val->add_field('title', 'Title', 'required|max_length[255]');
-        $val->add_field('description', 'Description', '');
+//        $val->add_field('description', 'Description', '');
         $val->add_field('logo_text', 'Logo Text', 'required|max_length[255]');
         $val->add_field('pass_type_identifier', 'Pass Type Identifier', 'required|max_length[255]');
         $val->add_field('team_identifier', 'Team Identifier', 'required|max_length[255]');
         $val->add_field('background_color', 'Background Color', 'max_length[255]');
         $val->add_field('foreground_color', 'Foreground Color', 'max_length[255]');
         $val->add_field('label_color', 'Label Color', 'max_length[255]');
-//        $val->add_field('altitude', 'Altitude', '');
-//        $val->add_field('latitude', 'Latitude', '');
-//        $val->add_field('longitude', 'Longitude', '');
-        $val->add_field('relevant_text', 'Relevant Text', 'max_length[255]');
         $val->add_field('signature', 'Signature', 'max_length[255]');
         $val->add_field('logo', 'Logo', 'max_length[255]');
         $val->add_field('logo2x', 'Logo2x', 'max_length[255]');
@@ -137,12 +139,17 @@ class Model_Pass extends \Orm\Model
 
     public function get_upload_files()
     {
-        \Fuel\Core\File::create_dir(\Fuel\Core\Config::get('pass.files_dir'), $this->id);
+        if (!file_exists($this->files_dir_path()))
+        {
+            \Fuel\Core\File::create_dir(\Fuel\Core\Config::get('pass.files_dir'), $this->id);
+        }
 
         $config = array(
             'path' => \Fuel\Core\Config::get('pass.files_dir') . DS . $this->id,
             'ext_whitelist' => array('p12'),
         );
+
+        $result = array();
 
         \Fuel\Core\Upload::process($config);
 
@@ -157,8 +164,6 @@ class Model_Pass extends \Orm\Model
                     $this->set_cert_name($file['saved_as']);
                 }
             }
-
-            return array();
         }
         else
         {
@@ -170,9 +175,9 @@ class Model_Pass extends \Orm\Model
                     $result[] = 'Error Certification File Upload';
                 }
             }
-
-            return $result;
         }
+
+        return $result;
     }
 
     public function files_dir_path()

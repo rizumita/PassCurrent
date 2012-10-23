@@ -188,16 +188,62 @@ class Controller_Admin_Pass extends Controller_Admin
         }
 
         Response::redirect('admin/pass');
-
     }
 
-    public function action_location($id = null)
+    public function action_locations($id = null)
     {
         $pass = Model_Pass::find($id);
 
+        if (Input::method() == 'POST')
+        {
+            $val = Model_Location::validate('create');
+            if ($val->run())
+            {
+                $location = Model_Location::forge(array(
+                                                       'latitude' => \Fuel\Core\Input::post('latitude'),
+                                                       'longitude' => \Fuel\Core\Input::post('longitude'),
+                                                       'altitude' => \Fuel\Core\Input::post('altitude', null),
+                                                       'relevant_text' => \Fuel\Core\Input::post('relevant_text', null),
+                                                  ));
+                $pass->locations[] = $location;
+
+                if ($location and $pass->save())
+                {
+                    Session::set_flash('success', e('Added location #' . $location->id . '.'));
+                    \Fuel\Core\Response::redirect('admin/pass/locations/'.$id);
+                    return;
+                }
+                else
+                {
+                    Session::set_flash('error', e('Could not save location.'));
+                }
+            }
+            else
+            {
+                Session::set_flash('error', $val->error());
+            }
+        }
+
         $this->template->set_global('pass', $pass, false);
-        $this->template->title = "Pass Location";
-        $this->template->content = View::forge('admin/pass/location');
+        $this->template->title = "Pass Locations";
+        $this->template->content = View::forge('admin/pass/locations');
     }
 
+    public function action_delete_location($id = null)
+    {
+        if ($location = Model_Location::find($id))
+        {
+            $pass = $location->pass;
+            $location->delete();
+
+            Session::set_flash('success', e('Deleted location #' . $id));
+
+            Response::redirect('admin/pass/locations/' . $pass->id);
+        }
+        else
+        {
+            Session::set_flash('error', e('Could not delete location #' . $id));
+            Response::redirect('admin/pass');
+        }
+    }
 }
