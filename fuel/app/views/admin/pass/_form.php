@@ -42,14 +42,6 @@
 
     </div>
 </div>
-<!--<div class="clearfix">-->
-<!--    --><?php //echo Form::label('Certification File', 'cert_file'); ?>
-<!---->
-<!--    --><?php //echo Input::post('cert_name', isset($pass) ? $pass->cert_name : 'No uploaded file.'); ?>
-<!--    <div class="input">-->
-<!--        --><?php //echo \Fuel\Core\Form::file('cert_file'); ?>
-<!--    </div>-->
-<!--</div>-->
 <div class="clearfix">
     <?php echo Form::label('Background color', 'background_color'); ?>
 
@@ -79,54 +71,6 @@
 
     <div class="input">
         <?php echo Form::input('signature', Input::post('signature', isset($pass) ? $pass->signature : ''), array('class' => 'span4')); ?>
-
-    </div>
-</div>
-<div class="clearfix">
-    <?php echo Form::label('Logo', 'logo'); ?>
-
-    <div class="input">
-        <?php echo \Fuel\Core\Form::file('logo_file'); ?>
-
-    </div>
-</div>
-<div class="clearfix">
-    <?php echo Form::label('Logo2x', 'logo2x'); ?>
-
-    <div class="input">
-        <?php echo Form::input('logo2x', Input::post('logo2x', isset($pass) ? $pass->logo2x : ''), array('class' => 'span4')); ?>
-
-    </div>
-</div>
-<div class="clearfix">
-    <?php echo Form::label('Icon', 'icon'); ?>
-
-    <div class="input">
-        <?php echo Form::input('icon', Input::post('icon', isset($pass) ? $pass->icon : ''), array('class' => 'span4')); ?>
-
-    </div>
-</div>
-<div class="clearfix">
-    <?php echo Form::label('Icon2x', 'icon2x'); ?>
-
-    <div class="input">
-        <?php echo Form::input('icon2x', Input::post('icon2x', isset($pass) ? $pass->icon2x : ''), array('class' => 'span4')); ?>
-
-    </div>
-</div>
-<div class="clearfix">
-    <?php echo Form::label('Strip', 'strip'); ?>
-
-    <div class="input">
-        <?php echo Form::input('strip', Input::post('strip', isset($pass) ? $pass->strip : ''), array('class' => 'span4')); ?>
-
-    </div>
-</div>
-<div class="clearfix">
-    <?php echo Form::label('Strip2x', 'strip2x'); ?>
-
-    <div class="input">
-        <?php echo Form::input('strip2x', Input::post('strip2x', isset($pass) ? $pass->strip2x : ''), array('class' => 'span4')); ?>
 
     </div>
 </div>

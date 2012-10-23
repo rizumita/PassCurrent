@@ -181,7 +181,7 @@ class Controller_Admin_Pass extends Controller_Admin
 
         if (Input::method() == 'POST')
         {
-            $upload_result = $pass->get_upload_files();
+            $upload_result = $pass->get_upload_files(array('p12'));
 
             $error_upload = count($upload_result) > 0;
 
@@ -204,6 +204,37 @@ class Controller_Admin_Pass extends Controller_Admin
         $this->template->set_global('pass', $pass);
         $this->template->title = "Pass Certificate";
         $this->template->content = View::forge('admin/pass/cert');
+    }
+
+    public function action_images($id = null)
+    {
+        $pass = Model_Pass::find($id);
+
+        if (Input::method() == 'POST')
+        {
+            $upload_result = $pass->get_upload_files(array('png'));
+
+            $error_upload = count($upload_result) > 0;
+
+            if ($error_upload)
+            {
+                Session::set_flash('error', $upload_result);
+            }
+            elseif ($pass and $pass->save())
+            {
+                Session::set_flash('success', e('Added pass #' . $pass->id . '.'));
+
+                Response::redirect('admin/pass');
+            }
+            else
+            {
+                Session::set_flash('error', e('Could not save pass.'));
+            }
+        }
+
+        $this->template->set_global('pass', $pass);
+        $this->template->title = "Pass Images";
+        $this->template->content = View::forge('admin/pass/images');
     }
 
     public function action_locations($id = null)
@@ -261,5 +292,23 @@ class Controller_Admin_Pass extends Controller_Admin
             Session::set_flash('error', e('Could not delete location #' . $id));
             Response::redirect('admin/pass');
         }
+    }
+
+    public function action_image($id = null, $name = null)
+    {
+        $pass = Model_Pass::find($id);
+        $path = $pass->file_path($pass->{$name});
+
+        $body = null;
+
+        if (file_exists($path))
+        {
+            $info = \Fuel\Core\File::file_info($path);
+            $body = file_get_contents($path);
+        }
+
+        return Response::forge($body, 200, array('Content-Type' => 'image/png',
+                                                 'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
+                                                 'Content-Length' => $info['size']));
     }
 }

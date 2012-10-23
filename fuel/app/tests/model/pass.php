@@ -16,7 +16,7 @@ class PassTest extends \Fuel\Core\TestCase
 
     public function test_pass_json()
     {
-        $pass = Model_Pass::forge(array('title' => 'test title',
+        $pass = Model_Pass::forge(array('name' => 'test name',
                                         'pass_type_identifier' => 'pass.jp.caph.test-coupon',
                                         'team_identifier' => 'xxxxxxxxx',
                                         'description' => 'desc',
@@ -44,9 +44,9 @@ class PassTest extends \Fuel\Core\TestCase
         var_dump($pass->pass_json());
     }
 
-    public function test_cert_path()
+    public function test_file_path()
     {
-        $pass = Model_Pass::forge(array('title' => 'test title',
+        $pass = Model_Pass::forge(array('name' => 'test name',
                                         'pass_type_identifier' => 'pass.jp.caph.test-coupon',
                                         'team_identifier' => 'xxxxxxxxx',
                                         'description' => 'desc',
@@ -58,24 +58,24 @@ class PassTest extends \Fuel\Core\TestCase
                                         'label_color' => 'rgb(2,2,2)',
                                         'offer_label' => 'samaplelabel',
                                         'offer_value' => 'samplevalue',
-                                        'cert_name' => 'testcert.p12',
+                                        'cert' => 'testcert.p12',
                                   ));
         $pass->save();
 
-        $this->assertEquals(\Fuel\Core\Config::get('pass.files_dir') . DS . $pass->id . DS . 'testcert.p12', $pass->cert_path());
+        $this->assertEquals(\Fuel\Core\Config::get('pass.files_dir') . DS . $pass->id . DS . 'testcert.p12', $pass->file_path($pass->cert));
     }
 
-    public function test_remove_old_certificate()
+    public function test_remove_old_file()
     {
-        $pass = Model_Pass::forge(array('cert_name' => 'testcert.p12'));
+        $pass = Model_Pass::forge(array('cert' => 'testcert.p12'));
 
-        \Fuel\Core\File::create($pass->files_dir_path(), $pass->cert_name);
+        \Fuel\Core\File::create($pass->files_dir_path(), $pass->cert);
 
-        $this->assertTrue(file_exists($pass->cert_path()));
+        $this->assertTrue(file_exists($pass->file_path($pass->cert)));
 
-        $pass->remove_old_certificate();
+        $pass->remove_old_file($pass->cert);
 
-        $this->assertFalse(file_exists($pass->cert_path()));
+        $this->assertFalse(file_exists($pass->file_path($pass->cert)));
     }
 
 }

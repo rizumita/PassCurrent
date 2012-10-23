@@ -1,7 +1,7 @@
 <?php if (isset($pass)): ?>
 
-<?php if ($pass->cert_name): ?>
-    <p>Current certificate: <?php echo $pass->cert_name; ?></p>
+<?php if ($pass->cert): ?>
+    <p>Current certificate: <?php echo $pass->cert; ?></p>
     <?php else: ?>
     <p>No certificate</p>
 

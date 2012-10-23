@@ -16,17 +16,23 @@ class Model_Pass extends \Orm\Model
         'foreground_color',
         'label_color',
         'signature',
+        'background',
+        'background2x',
+        'footer',
+        'footer2x',
         'logo',
         'logo2x',
         'icon',
         'icon2x',
         'strip',
         'strip2x',
+        'thumbnail',
+        'thumbnail2x',
         'barcode_message',
         'barcode_format',
         'offer_value',
         'offer_label',
-        'cert_name',
+        'cert',
         'created_at',
         'updated_at',
     );
@@ -64,17 +70,23 @@ class Model_Pass extends \Orm\Model
         $val->add_field('foreground_color', 'Foreground Color', 'max_length[255]');
         $val->add_field('label_color', 'Label Color', 'max_length[255]');
         $val->add_field('signature', 'Signature', 'max_length[255]');
+        $val->add_field('background', 'Background', 'max_length[255]');
+        $val->add_field('background2x', 'Background2x', 'max_length[255]');
+        $val->add_field('footer', 'Footer', 'max_length[255]');
+        $val->add_field('footer2x', 'Footer2x', 'max_length[255]');
         $val->add_field('logo', 'Logo', 'max_length[255]');
         $val->add_field('logo2x', 'Logo2x', 'max_length[255]');
         $val->add_field('icon', 'Icon', 'max_length[255]');
         $val->add_field('icon2x', 'Icon2x', 'max_length[255]');
         $val->add_field('strip', 'Strip', 'max_length[255]');
         $val->add_field('strip2x', 'Strip2x', 'max_length[255]');
+        $val->add_field('thumbnail', 'Thumbnail', 'max_length[255]');
+        $val->add_field('thumbnail2x', 'Thumbnail2x', 'max_length[255]');
         $val->add_field('barcode_message', 'Barcode Message', 'max_length[255]');
         $val->add_field('barcode_format', 'Barcode Format', 'valid_string[numeric]');
         $val->add_field('offer_value', 'Offer Value', 'required|max_length[255]');
         $val->add_field('offer_label', 'Offer Label', 'required|max_length[255]');
-        $val->add_field('cert_name', 'Certification Name', 'max_length[255]');
+        $val->add_field('cert', 'Certification Name', 'max_length[255]');
 
         return $val;
     }
@@ -145,7 +157,7 @@ class Model_Pass extends \Orm\Model
         }
     }
 
-    public function get_upload_files()
+    public function get_upload_files($whitelist = array())
     {
         $this->prepare_files_dir();
 
@@ -153,7 +165,7 @@ class Model_Pass extends \Orm\Model
 
         $config = array(
             'path' => \Fuel\Core\Config::get('pass.files_dir') . DS . $this->id,
-            'ext_whitelist' => array('p12'),
+            'ext_whitelist' => $whitelist,
         );
 
         \Fuel\Core\Upload::process($config);
@@ -164,11 +176,8 @@ class Model_Pass extends \Orm\Model
             $files = \Fuel\Core\Upload::get_files();
             foreach ($files as $file)
             {
-                if ($file['field'] == 'cert')
-                {
-                    $this->remove_old_certificate();
-                    $this->cert_name = $file['saved_as'];
-                }
+                $this->remove_old_file($this->{$file['field']});
+                $this->{$file['field']} = $file['saved_as'];
             }
         }
         else
@@ -176,41 +185,52 @@ class Model_Pass extends \Orm\Model
             $errors = \Fuel\Core\Upload::get_errors();
             foreach ($errors as $error)
             {
-                if ($error['field'] == 'cert')
+                $name = $error['field'];
+                if ($name == 'cert')
                 {
-                    $result[] = 'Error Certificate Upload';
+                    $name = 'certificate';
                 }
+                elseif (preg_match('/(.+)2x/', $name, $matches))
+                {
+                    $name = $matches[1] . ' retina';
+                }
+
+                $result[] = 'Error ' . $name . ' upload';
             }
         }
 
         return $result;
     }
 
-    public function files_dir_path()
+    public
+    function files_dir_path()
     {
         return \Fuel\Core\Config::get('pass.files_dir') . DS . $this->id;
     }
 
-    public function cert_path()
+    public
+    function file_path($name)
     {
-        return $this->files_dir_path() . DS . $this->cert_name;
+        return $this->files_dir_path() . DS . $name;
     }
 
-    public function status()
+    public
+    function status()
     {
         return '';
     }
 
-    public function remove_old_certificate()
+    public
+    function remove_old_file($name = null)
     {
-        if (empty($this->cert_name))
+        if (is_null($name))
         {
             return;
         }
 
-        if (file_exists($this->cert_path()))
+        if (file_exists($this->file_path($name)))
         {
-            \Fuel\Core\File::delete($this->cert_path());
+            \Fuel\Core\File::delete($this->file_path($name));
         }
     }
 }
