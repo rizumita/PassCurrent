@@ -4,7 +4,7 @@
 
 <fieldset>
     <div class="clearfix">
-        <?php echo Form::label('Background', 'background'); ?>
+        <?php echo Form::label('Background 180×220', 'background'); ?>
 
         <?php if ($pass->background) : ?>
         <img src="<?php echo \Fuel\Core\Uri::create('admin/pass/image/' . $pass->id . '/background'); ?>" alt="Background">
@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="clearfix">
-        <?php echo Form::label('Footer', 'footer'); ?>
+        <?php echo Form::label('Footer 286×15', 'footer'); ?>
 
         <div class="input">
             <?php echo \Fuel\Core\Form::file('footer'); ?>
@@ -36,7 +36,7 @@
         </div>
     </div>
     <div class="clearfix">
-        <?php echo Form::label('Logo', 'logo'); ?>
+        <?php echo Form::label('Logo 160×50', 'logo'); ?>
 
         <div class="input">
             <?php echo \Fuel\Core\Form::file('logo'); ?>
@@ -50,7 +50,7 @@
         </div>
     </div>
     <div class="clearfix">
-        <?php echo Form::label('Icon', 'icon'); ?>
+        <?php echo Form::label('Icon 29x29', 'icon'); ?>
 
         <div class="input">
             <?php echo \Fuel\Core\Form::file('icon'); ?>
@@ -64,7 +64,7 @@
         </div>
     </div>
     <div class="clearfix">
-        <?php echo Form::label('Strip', 'strip'); ?>
+        <?php echo Form::label('Strip 312×110, 312×123', 'strip'); ?>
 
         <div class="input">
             <?php echo \Fuel\Core\Form::file('strip'); ?>
@@ -78,7 +78,7 @@
         </div>
     </div>
     <div class="clearfix">
-        <?php echo Form::label('Thumbnail', 'thumbnail'); ?>
+        <?php echo Form::label('Thumbnail 90×90', 'thumbnail'); ?>
 
         <div class="input">
             <?php echo \Fuel\Core\Form::file('thumbnail'); ?>

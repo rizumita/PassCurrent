@@ -29,6 +29,10 @@ class PassTest extends \Fuel\Core\TestCase
                                         'offer_label' => 'samaplelabel',
                                         'offer_value' => 'samplevalue',
                                   ));
+        $pass->locations[] = Model_Location::forge(array('latitude' => 1.01, 'longitude' => 1.02));
+        $pass->locations[] = Model_Location::forge(array('latitude' => 2.03, 'longitude' => 2.04, 'altitude' => 2.05,
+                                                         'relevant_text' => 'text'));
+        $pass->save();
 
         $this->assertRegExp('/\{.*"formatVersion":1.*\}/', $pass->pass_json());
         $this->assertRegExp('/\{.*"serialNumber":"001".*\}/', $pass->pass_json());
@@ -41,6 +45,8 @@ class PassTest extends \Fuel\Core\TestCase
         $this->assertRegExp('/\{.*"backgroundColor":"rgb\(1,1,1\)".*\}/', $pass->pass_json());
         $this->assertRegExp('/\{.*"labelColor":"rgb\(2,2,2\)".*\}/', $pass->pass_json());
         $this->assertRegExp('/\{.*"coupon":\{"primaryFields":\{"key":"offer","label":"samaplelabel","value":"samplevalue"\}\}.*\}/', $pass->pass_json());
+        $this->assertRegExp('/\{.*"locations":\[\{"latitude":1.01,"longitude":1.02\},\{"latitude":2.03,"longitude":2.04,"altitude":2.05,"relevantText":"text"\}\].*\}/', $pass->pass_json());
+
         var_dump($pass->pass_json());
     }
 

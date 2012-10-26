@@ -121,6 +121,13 @@ class Model_Pass extends \Orm\Model
         {
             $array['labelColor'] = $this->label_color;
         }
+        if (!empty($this->locations))
+        {
+            $array['locations'] = array_map(function ($location)
+            {
+                return $location->to_array();
+            }, array_values($this->locations));
+        }
 
         if (!empty($this->barcode_message))
         {
