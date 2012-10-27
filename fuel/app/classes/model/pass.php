@@ -15,24 +15,10 @@ class Model_Pass extends \Orm\Model
         'background_color',
         'foreground_color',
         'label_color',
-        'signature',
-        'background',
-        'background2x',
-        'footer',
-        'footer2x',
-        'logo',
-        'logo2x',
-        'icon',
-        'icon2x',
-        'strip',
-        'strip2x',
-        'thumbnail',
-        'thumbnail2x',
         'barcode_message',
         'barcode_format',
         'offer_value',
         'offer_label',
-        'cert',
         'created_at',
         'updated_at',
     );
@@ -69,24 +55,12 @@ class Model_Pass extends \Orm\Model
         $val->add_field('background_color', 'Background Color', 'max_length[255]');
         $val->add_field('foreground_color', 'Foreground Color', 'max_length[255]');
         $val->add_field('label_color', 'Label Color', 'max_length[255]');
-        $val->add_field('signature', 'Signature', 'max_length[255]');
-        $val->add_field('background', 'Background', 'max_length[255]');
-        $val->add_field('background2x', 'Background2x', 'max_length[255]');
-        $val->add_field('footer', 'Footer', 'max_length[255]');
-        $val->add_field('footer2x', 'Footer2x', 'max_length[255]');
-        $val->add_field('logo', 'Logo', 'max_length[255]');
-        $val->add_field('logo2x', 'Logo2x', 'max_length[255]');
-        $val->add_field('icon', 'Icon', 'max_length[255]');
-        $val->add_field('icon2x', 'Icon2x', 'max_length[255]');
-        $val->add_field('strip', 'Strip', 'max_length[255]');
-        $val->add_field('strip2x', 'Strip2x', 'max_length[255]');
         $val->add_field('thumbnail', 'Thumbnail', 'max_length[255]');
         $val->add_field('thumbnail2x', 'Thumbnail2x', 'max_length[255]');
         $val->add_field('barcode_message', 'Barcode Message', 'max_length[255]');
         $val->add_field('barcode_format', 'Barcode Format', 'valid_string[numeric]');
         $val->add_field('offer_value', 'Offer Value', 'required|max_length[255]');
         $val->add_field('offer_label', 'Offer Label', 'required|max_length[255]');
-        $val->add_field('cert', 'Certification Name', 'max_length[255]');
 
         return $val;
     }
@@ -156,14 +130,6 @@ class Model_Pass extends \Orm\Model
         }
     }
 
-    public function prepare_files_dir()
-    {
-        if (!file_exists($this->files_dir_path()))
-        {
-            \Fuel\Core\File::create_dir(\Fuel\Core\Config::get('pass.files_dir'), $this->id);
-        }
-    }
-
     public function get_upload_files($whitelist = array())
     {
         $this->prepare_files_dir();
@@ -183,8 +149,19 @@ class Model_Pass extends \Orm\Model
             $files = \Fuel\Core\Upload::get_files();
             foreach ($files as $file)
             {
-                $this->remove_old_file($this->{$file['field']});
-                $this->{$file['field']} = $file['saved_as'];
+                $name = $file['field'];
+
+                if ($name == 'cert')
+                {
+                    $name = 'cert.p12';
+                }
+                else
+                {
+                    $name .= '.png';
+                }
+
+                $this->remove_old_file($this->file_path($name));
+                \Fuel\Core\File::rename($file['saved_as'], $this->file_path($name));
             }
         }
         else
@@ -197,9 +174,9 @@ class Model_Pass extends \Orm\Model
                 {
                     $name = 'certificate';
                 }
-                elseif (preg_match('/(.+)2x/', $name, $matches))
+                else
                 {
-                    $name = $matches[1] . ' retina';
+                    $name = str_replace('@2x', ' retina', $name);
                 }
 
                 $result[] = 'Error ' . $name . ' upload';
@@ -209,35 +186,47 @@ class Model_Pass extends \Orm\Model
         return $result;
     }
 
-    public
-    function files_dir_path()
-    {
-        return \Fuel\Core\Config::get('pass.files_dir') . DS . $this->id;
-    }
-
-    public
-    function file_path($name)
-    {
-        return $this->files_dir_path() . DS . $name;
-    }
-
-    public
-    function status()
+    public function status()
     {
         return '';
     }
 
-    public
-    function remove_old_file($name = null)
+    public function generate()
     {
-        if (is_null($name))
+        if (empty($this->pass_type_identifier))
         {
-            return;
+            return 'Set pass type identifier.';
+        }
+        elseif (empty($this->team_identifier))
+        {
+            return 'Set team identifier.';
+        }
+        elseif (empty($this->offer_label))
+        {
+            return 'Set offer label.';
+        }
+        elseif (empty($this->offer_value))
+        {
+            return 'Set offer value.';
         }
 
-        if (file_exists($this->file_path($name)))
-        {
-            \Fuel\Core\File::delete($this->file_path($name));
-        }
+        $manager = new Pass_File_Manager($this);
+        $manager->generate_file('pass.json', $this->pass_json());
+        $manager->generate_file('manifest.json', $this->manifest($manager->files()));
+
+        return null;
     }
+
+    public function manifest($files)
+    {
+        $shas = array();
+
+        foreach ($files as $name => $path)
+        {
+            $shas[$name] = sha1(file_get_contents($path));
+        }
+
+        return \Fuel\Core\Format::forge($shas)->to_json();
+    }
+
 }

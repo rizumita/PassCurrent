@@ -16,3 +16,4 @@ nbproject/
 /fuel/app/config/crypt.php
 fuel/app/files/*
 fuel/app/cert/*
+fuel/app/tests/files/*

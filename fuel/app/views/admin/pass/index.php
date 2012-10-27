@@ -9,6 +9,7 @@
         <th>Image Files</th>
         <th>Location</th>
         <th>Status</th>
+        <th>File</th>
         <th></th>
     </tr>
     </thead>
@@ -17,10 +18,18 @@
     <tr>
 
         <td><?php echo $pass->name; ?></td>
-        <td><?php echo \Fuel\Core\Html::anchor('admin/pass/cert/' . $pass->id, 'Configure') ?></td>
-        <td><?php echo \Fuel\Core\Html::anchor('admin/pass/images/' . $pass->id, 'Configure') ?></td>
-        <td><?php echo \Fuel\Core\Html::anchor('admin/pass/locations/' . $pass->id, 'Configure') ?></td>
+        <td><?php echo Html::anchor('admin/pass/cert/' . $pass->id, 'Configure') ?></td>
+        <td><?php echo Html::anchor('admin/pass/images/' . $pass->id, 'Configure') ?></td>
+        <td><?php echo Html::anchor('admin/pass/locations/' . $pass->id, 'Configure') ?></td>
         <td><?php echo $pass->status(); ?></td>
+        <td>
+            <?php if (empty($pass->file_name)): ?>
+                <?php echo Html::anchor('admin/pass/generate/' .$pass->id, 'Generate'); ?>
+            <?php else: ?>
+                <?php echo Html::anchor('admin/pass/update/' .$pass->id, 'Update', array('onclick' => "return confirm('Are you sure?')")); ?>
+             | <?php Html::anchor('admin/pass/remove/' . $pass->id, 'Remove', array('onclick' => "return confirm('Are you sure?')")); ?>
+            <?php endif; ?>
+        </td>
         <td>
             <?php echo Html::anchor('admin/pass/view/' . $pass->id, 'View'); ?> |
             <?php echo Html::anchor('admin/pass/edit/' . $pass->id, 'Edit'); ?> |

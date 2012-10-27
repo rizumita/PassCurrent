@@ -36,10 +36,6 @@ class Controller_Admin_Pass extends Controller_Admin
                                                'background_color' => Input::post('background_color'),
                                                'foreground_color' => Input::post('foreground_color'),
                                                'label_color' => Input::post('label_color'),
-                                               'altitude' => Input::post('altitude'),
-                                               'latitude' => Input::post('latitude'),
-                                               'longitude' => Input::post('longitude'),
-                                               'relevant_text' => Input::post('relevant_text'),
                                                'signature' => Input::post('signature'),
                                                'logo' => Input::post('logo'),
                                                'logo2x' => Input::post('logo2x'),
@@ -82,7 +78,7 @@ class Controller_Admin_Pass extends Controller_Admin
 
         if ($val->run())
         {
-            $pass->title = Input::post('name');
+            $pass->name = Input::post('name');
             $pass->description = Input::post('description');
             $pass->logo_text = Input::post('logo_text');
             $pass->pass_type_identifier = Input::post('pass_type_identifier');
@@ -90,10 +86,6 @@ class Controller_Admin_Pass extends Controller_Admin
             $pass->background_color = Input::post('background_color');
             $pass->foreground_color = Input::post('foreground_color');
             $pass->label_color = Input::post('label_color');
-            $pass->altitude = Input::post('altitude');
-            $pass->latitude = Input::post('latitude');
-            $pass->longitude = Input::post('longitude');
-            $pass->relevant_text = Input::post('relevant_text');
             $pass->signature = Input::post('signature');
             $pass->logo = Input::post('logo');
             $pass->logo2x = Input::post('logo2x');
@@ -123,7 +115,7 @@ class Controller_Admin_Pass extends Controller_Admin
         {
             if (Input::method() == 'POST')
             {
-                $pass->title = $val->validated('name');
+                $pass->name = $val->validated('name');
                 $pass->description = $val->validated('description');
                 $pass->logo_text = $val->validated('logo_text');
                 $pass->pass_type_identifier = $val->validated('pass_type_identifier');
@@ -131,10 +123,6 @@ class Controller_Admin_Pass extends Controller_Admin
                 $pass->background_color = $val->validated('background_color');
                 $pass->foreground_color = $val->validated('foreground_color');
                 $pass->label_color = $val->validated('label_color');
-                $pass->altitude = $val->validated('altitude');
-                $pass->latitude = $val->validated('latitude');
-                $pass->longitude = $val->validated('longitude');
-                $pass->relevant_text = $val->validated('relevant_text');
                 $pass->signature = $val->validated('signature');
                 $pass->logo = $val->validated('logo');
                 $pass->logo2x = $val->validated('logo2x');
@@ -310,5 +298,21 @@ class Controller_Admin_Pass extends Controller_Admin
         return Response::forge($body, 200, array('Content-Type' => 'image/png',
                                                  'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
                                                  'Content-Length' => $info['size']));
+    }
+
+    public function action_generate($id = null)
+    {
+        $pass = Model_Pass::find($id);
+
+        if (!empty($pass))
+        {
+            $error = $pass->generate();
+            if (!empty($error))
+            {
+                Session::set_flash('error', e('Could not generate pass #' . $id . ". " . $error));
+            }
+        }
+
+        Response::redirect('admin/pass');
     }
 }

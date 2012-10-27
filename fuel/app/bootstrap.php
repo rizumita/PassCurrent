@@ -11,6 +11,7 @@ require COREPATH.'bootstrap.php';
 Autoloader::add_classes(array(
 	// Add classes you want to override here
 	// Example: 'View' => APPPATH.'classes/view.php',
+    'Pass_File_Manager' => APPPATH.'classes/pass_file_manager.php',
 ));
 
 // Register the autoloader

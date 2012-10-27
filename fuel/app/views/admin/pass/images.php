@@ -15,10 +15,10 @@
         </div>
     </div>
     <div class="clearfix">
-        <?php echo Form::label('Background Retina', 'background2x'); ?>
+        <?php echo Form::label('Background Retina', 'background@2x'); ?>
 
         <div class="input">
-            <?php echo \Fuel\Core\Form::file('background2x'); ?>
+            <?php echo \Fuel\Core\Form::file('background@2x'); ?>
         </div>
     </div>
     <div class="clearfix">
@@ -29,10 +29,10 @@
         </div>
     </div>
     <div class="clearfix">
-        <?php echo Form::label('Footer Retina', 'footer2x'); ?>
+        <?php echo Form::label('Footer Retina', 'footer@2x'); ?>
 
         <div class="input">
-            <?php echo \Fuel\Core\Form::file('footer2x'); ?>
+            <?php echo \Fuel\Core\Form::file('footer@2x'); ?>
         </div>
     </div>
     <div class="clearfix">
@@ -43,10 +43,10 @@
         </div>
     </div>
     <div class="clearfix">
-        <?php echo Form::label('Logo Retina', 'logo2x'); ?>
+        <?php echo Form::label('Logo Retina', 'logo@2x'); ?>
 
         <div class="input">
-            <?php echo \Fuel\Core\Form::file('logo2x'); ?>
+            <?php echo \Fuel\Core\Form::file('logo@2x'); ?>
         </div>
     </div>
     <div class="clearfix">
@@ -57,10 +57,10 @@
         </div>
     </div>
     <div class="clearfix">
-        <?php echo Form::label('Icon Retina', 'icon2x'); ?>
+        <?php echo Form::label('Icon Retina', 'icon@2x'); ?>
 
         <div class="input">
-            <?php echo \Fuel\Core\Form::file('icon2x'); ?>
+            <?php echo \Fuel\Core\Form::file('icon@2x'); ?>
         </div>
     </div>
     <div class="clearfix">
@@ -71,10 +71,10 @@
         </div>
     </div>
     <div class="clearfix">
-        <?php echo Form::label('Strip Retina', 'strip2x'); ?>
+        <?php echo Form::label('Strip Retina', 'strip@2x'); ?>
 
         <div class="input">
-            <?php echo \Fuel\Core\Form::file('strip2x'); ?>
+            <?php echo \Fuel\Core\Form::file('strip@2x'); ?>
         </div>
     </div>
     <div class="clearfix">
@@ -85,10 +85,10 @@
         </div>
     </div>
     <div class="clearfix">
-        <?php echo Form::label('Thumbnail Retina', 'thumbnail2x'); ?>
+        <?php echo Form::label('Thumbnail Retina', 'thumbnail@2x'); ?>
 
         <div class="input">
-            <?php echo \Fuel\Core\Form::file('thumbnail2x'); ?>
+            <?php echo \Fuel\Core\Form::file('thumbnail@2x'); ?>
         </div>
     </div>
     <div class="actions">
