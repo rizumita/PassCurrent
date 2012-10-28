@@ -191,7 +191,7 @@ class Model_Pass extends \Orm\Model
         return '';
     }
 
-    public function generate()
+    public function generate($cert_password = '')
     {
         if (empty($this->pass_type_identifier))
         {
@@ -213,6 +213,9 @@ class Model_Pass extends \Orm\Model
         $manager = new Pass_File_Manager($this);
         $manager->generate_file('pass.json', $this->pass_json());
         $manager->generate_file('manifest.json', $this->manifest($manager->files()));
+        if ($manager->generate_signature($cert_password)==false) {
+            return $manager->error;
+        }
 
         return null;
     }

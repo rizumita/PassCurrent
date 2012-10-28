@@ -11,6 +11,7 @@ class Pass_File_Manager
 {
 
     private $pass;
+    public $error;
 
     public function Pass_File_Manager($pass)
     {
@@ -28,8 +29,58 @@ class Pass_File_Manager
 
     public function generate_file($name, $content)
     {
-        $this->remove_file($this->file_path($name));
-        \Fuel\Core\File::create($this->files_dir_path(), $name, $content);
+        if ($this->remove_file($this->file_path($name)) == false)
+        {
+            return false;
+        }
+
+        if (\Fuel\Core\File::create($this->files_dir_path(), $name, $content))
+        {
+            return true;
+        }
+        else
+        {
+            $this->error = 'Could not generate ' . $name;
+            return false;
+        }
+    }
+
+    public function generate_signature($cert_password = '')
+    {
+        if (!file_exists($this->file_path('certificate.p12')))
+        {
+            $this->error = 'Certificate does not exist.';
+            return false;
+        }
+
+        $pkcs12 = file_get_contents($this->file_path('certificate.p12'));
+        $certs = array();
+        if (openssl_pkcs12_read($pkcs12, $certs, $cert_password) == true)
+        {
+            $cert_data = openssl_x509_read($certs['cert']);
+            $private_key = openssl_pkey_get_private($certs['pkey'], $cert_password);
+
+            if (file_exists(\Fuel\Core\Config::get('pass.WWDR_cert')))
+            {
+                openssl_pkcs7_sign($this->file_path('manifest.json'), $this->file_path('signature'), $cert_data, $private_key, array(), PKCS7_BINARY | PKCS7_DETACHED, \Fuel\Core\Config::get('pass.WWDR_cert'));
+            }
+            else
+            {
+                $this->error = 'WWDR Intermediate Certificate does not exist.';
+                return false;
+            }
+
+            $signature = file_get_contents($this->file_path('signature'));
+            $signature = $this->convert_PEM_to_DER($signature);
+            \Fuel\Core\File::update($this->files_dir_path(), 'signature', $signature);
+
+            return true;
+        }
+        else
+        {
+            $this->error = 'Could not read the certificate.';
+            return false;
+        }
     }
 
     public function files()
@@ -73,14 +124,21 @@ class Pass_File_Manager
 
     private function remove_file($path = null)
     {
-        if (is_null($path))
-        {
-            return;
-        }
-
         if (file_exists($path))
         {
-            \Fuel\Core\File::delete($path);
+            if (\Fuel\Core\File::delete($path))
+            {
+                return true;
+            }
+            else
+            {
+                $this->error = 'Could not delete ' . $path;
+                return false;
+            }
+        }
+        else
+        {
+            return true;
         }
     }
 
@@ -92,6 +150,12 @@ class Pass_File_Manager
     private function files_dir_path()
     {
         return \Fuel\Core\Config::get('pass.files_dir') . DS . $this->pass->id;
+    }
+
+    private function convert_PEM_to_DER($signature)
+    {
+        $signature = substr($signature, (strpos($signature, 'filename="smime.p7s') + 20));
+        return base64_decode(trim(substr($signature, 0, strpos($signature, '------'))));
     }
 
 }

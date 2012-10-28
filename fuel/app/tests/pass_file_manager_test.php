@@ -68,4 +68,20 @@ class PassFileManagerTest extends \Fuel\Core\TestCase
         $this->assertEquals(APPPATH . 'tests/files/' . $this->pass->id . DS . 'pass.json', $files['pass.json']);
         $this->assertEquals(APPPATH . 'tests/files/' . $this->pass->id . DS . 'background.png', $files['background.png']);
     }
+
+    /*
+     * テストのためにAPPPATH.'tests/certificate.p12が必要
+     */
+    public function test_generate_signature()
+    {
+        $manager = new Pass_File_Manager($this->pass);
+
+        \Fuel\Core\File::copy(APPPATH . 'tests/certificate.p12', $manager->file_path('certificate.p12'));
+
+        $manager->generate_file('pass.json', $this->pass->pass_json());
+        $manager->generate_file('manifest.json', $this->pass->manifest($manager->files()));
+
+        $this->assertTrue($manager->generate_signature(''));
+        $this->assertFileExists($manager->file_path('signature'));
+    }
 }
