@@ -43,38 +43,6 @@
     </div>
 </div>
 <div class="clearfix">
-    <?php echo Form::label('Background color', 'background_color'); ?>
-
-    <div class="input">
-        <?php echo Form::input('background_color', Input::post('background_color', isset($pass) ? $pass->background_color : ''), array('class' => 'span4')); ?>
-
-    </div>
-</div>
-<div class="clearfix">
-    <?php echo Form::label('Foreground color', 'foreground_color'); ?>
-
-    <div class="input">
-        <?php echo Form::input('foreground_color', Input::post('foreground_color', isset($pass) ? $pass->foreground_color : ''), array('class' => 'span4')); ?>
-
-    </div>
-</div>
-<div class="clearfix">
-    <?php echo Form::label('Label color', 'label_color'); ?>
-
-    <div class="input">
-        <?php echo Form::input('label_color', Input::post('label_color', isset($pass) ? $pass->label_color : ''), array('class' => 'span4')); ?>
-
-    </div>
-</div>
-<div class="clearfix">
-    <?php echo Form::label('Signature', 'signature'); ?>
-
-    <div class="input">
-        <?php echo Form::input('signature', Input::post('signature', isset($pass) ? $pass->signature : ''), array('class' => 'span4')); ?>
-
-    </div>
-</div>
-<div class="clearfix">
     <?php echo Form::label('Barcode message', 'barcode_message'); ?>
 
     <div class="input">

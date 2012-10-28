@@ -5,6 +5,7 @@
  * Date: 2012/10/27
  * Time: 21:43
  * To change this template use File | Settings | File Templates.
+ * @property mixed generate_zip
  */
 
 class Pass_File_Manager
@@ -25,6 +26,53 @@ class Pass_File_Manager
         {
             return null;
         }
+    }
+
+    public function get_upload_files($whitelist = array())
+    {
+        $result = array();
+
+        $config = array(
+            'path' => $this->files_dir_path(),
+            'ext_whitelist' => $whitelist,
+            'randomize' => true
+        );
+
+        \Fuel\Core\Upload::process($config);
+
+        if (!\Fuel\Core\Upload::is_valid())
+        {
+            $errors = \Fuel\Core\Upload::get_errors();
+            foreach ($errors as $error)
+            {
+                $name = $error['field'];
+                $name = str_replace('@2x', ' retina', $name);
+                $this->error = 'Error ' . $name . ' upload';
+            }
+
+            return false;
+        }
+
+        \Fuel\Core\Upload::save();
+        $files = \Fuel\Core\Upload::get_files();
+        foreach ($files as $file)
+        {
+            $name = $file['field'];
+
+            if ($name == 'certificate')
+            {
+                $name .= '.p12';
+            }
+            else
+            {
+                $name .= '.png';
+            }
+
+            $this->remove_file($this->file_path($name));
+            \Fuel\Core\File::rename($file['saved_to'] . $file['saved_as'], $this->file_path($name));
+        }
+
+        return true;
     }
 
     public function generate_file($name, $content)
@@ -81,6 +129,31 @@ class Pass_File_Manager
             $this->error = 'Could not read the certificate.';
             return false;
         }
+    }
+
+    public function generate_zip()
+    {
+        $files = $this->files();
+        $files['manifest.json'] = $this->file_path('manifest.json');
+        $files['signature'] = $this->file_path('signature');
+
+        $this->remove_file($this->pkpass_path());
+
+        $zip = new ZipArchive();
+        if (!$zip->open($this->pkpass_path(), ZipArchive::CREATE))
+        {
+            $this->error = 'Could not create pkpass file.';
+            return false;
+        }
+
+        foreach ($files as $name => $path)
+        {
+            $zip->addFile($path, $name);
+        }
+
+        $zip->close();
+
+        return true;
     }
 
     public function files()
@@ -156,6 +229,11 @@ class Pass_File_Manager
     {
         $signature = substr($signature, (strpos($signature, 'filename="smime.p7s') + 20));
         return base64_decode(trim(substr($signature, 0, strpos($signature, '------'))));
+    }
+
+    public function pkpass_path()
+    {
+        return \Fuel\Core\Config::get('pass.pkpasses_dir') . DS . $this->pass->get_pkpass_name();
     }
 
 }

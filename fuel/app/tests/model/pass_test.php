@@ -65,4 +65,12 @@ class PassTest extends \Fuel\Core\TestCase
         $this->assertRegExp('/\{.*"pass.json":"38b8cd887c1ad0a0cc6dc3aa699cfc12b54dea43".*\}/', $manifest);
     }
 
+    public function test_get_pkpass_name()
+    {
+        $this->assertNull($this->pass->pkpass_name);
+
+        $this->assertRegExp('/.+\.pkpass/', $this->pass->get_pkpass_name());
+        $this->assertRegExp('/.+\.pkpass/', $this->pass->pkpass_name);
+    }
+
 }

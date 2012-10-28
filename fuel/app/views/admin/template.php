@@ -11,7 +11,8 @@
     </style>
     <?php echo Asset::js(array(
                               'http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js',
-                              'bootstrap.js'
+                              'bootstrap.js',
+                              'admin.js'
                          )); ?>
 
     <?php if (isset($head)) echo $head; ?>

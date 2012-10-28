@@ -19,6 +19,7 @@ class Model_Pass extends \Orm\Model
         'barcode_format',
         'offer_value',
         'offer_label',
+        'pkpass_name',
         'created_at',
         'updated_at',
     );
@@ -77,23 +78,25 @@ class Model_Pass extends \Orm\Model
             'logoText' => $this->logo_text,
             'coupon' => array(
                 'primaryFields' => array(
-                    'key' => 'offer',
-                    'label' => $this->offer_label,
-                    'value' => $this->offer_value,
+                    array(
+                        'key' => 'offer',
+                        'label' => $this->offer_label,
+                        'value' => $this->offer_value,
+                    ),
                 ))
         );
 
         if (!empty($this->foreground_color))
         {
-            $array['foregroundColor'] = $this->foreground_color;
+            $array['foregroundColor'] = 'rgb(' . Color::hex2rgb($this->foreground_color) . ')';
         }
         if (!empty($this->background_color))
         {
-            $array['backgroundColor'] = $this->background_color;
+            $array['backgroundColor'] = 'rgb(' . Color::hex2rgb($this->background_color) . ')';
         }
         if (!empty($this->label_color))
         {
-            $array['labelColor'] = $this->label_color;
+            $array['labelColor'] = 'rgb(' . Color::hex2rgb($this->label_color) . ')';
         }
         if (!empty($this->locations))
         {
@@ -130,62 +133,6 @@ class Model_Pass extends \Orm\Model
         }
     }
 
-    public function get_upload_files($whitelist = array())
-    {
-        $this->prepare_files_dir();
-
-        $result = array();
-
-        $config = array(
-            'path' => \Fuel\Core\Config::get('pass.files_dir') . DS . $this->id,
-            'ext_whitelist' => $whitelist,
-        );
-
-        \Fuel\Core\Upload::process($config);
-
-        if (\Fuel\Core\Upload::is_valid())
-        {
-            \Fuel\Core\Upload::save();
-            $files = \Fuel\Core\Upload::get_files();
-            foreach ($files as $file)
-            {
-                $name = $file['field'];
-
-                if ($name == 'cert')
-                {
-                    $name = 'cert.p12';
-                }
-                else
-                {
-                    $name .= '.png';
-                }
-
-                $this->remove_old_file($this->file_path($name));
-                \Fuel\Core\File::rename($file['saved_as'], $this->file_path($name));
-            }
-        }
-        else
-        {
-            $errors = \Fuel\Core\Upload::get_errors();
-            foreach ($errors as $error)
-            {
-                $name = $error['field'];
-                if ($name == 'cert')
-                {
-                    $name = 'certificate';
-                }
-                else
-                {
-                    $name = str_replace('@2x', ' retina', $name);
-                }
-
-                $result[] = 'Error ' . $name . ' upload';
-            }
-        }
-
-        return $result;
-    }
-
     public function status()
     {
         return '';
@@ -211,13 +158,16 @@ class Model_Pass extends \Orm\Model
         }
 
         $manager = new Pass_File_Manager($this);
-        $manager->generate_file('pass.json', $this->pass_json());
-        $manager->generate_file('manifest.json', $this->manifest($manager->files()));
-        if ($manager->generate_signature($cert_password)==false) {
-            return $manager->error;
+        if ($manager->generate_file('pass.json', $this->pass_json())
+            && $manager->generate_file('manifest.json', $this->manifest($manager->files()))
+            && $manager->generate_signature($cert_password)
+            && $manager->generate_zip()
+        )
+        {
+            return null;
         }
 
-        return null;
+        return $manager->error;
     }
 
     public function manifest($files)
@@ -230,6 +180,24 @@ class Model_Pass extends \Orm\Model
         }
 
         return \Fuel\Core\Format::forge($shas)->to_json();
+    }
+
+    public function get_pkpass_name()
+    {
+        if (!empty($this->pkpass_name))
+        {
+            return $this->pkpass_name;
+        }
+
+        $pkpass_name = \Fuel\Core\Str::random('alpha', 8) . '.pkpass';
+        while (Model_Pass::find()->where(array('pkpass_name' => $pkpass_name))->get_one())
+        {
+            $pkpass_name = \Fuel\Core\Str::random('alpha', 8) . '.pkpass';
+        }
+        $this->pkpass_name = $pkpass_name;
+        $this->save();
+
+        return $this->pkpass_name;
     }
 
 }

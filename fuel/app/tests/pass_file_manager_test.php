@@ -41,6 +41,8 @@ class PassFileManagerTest extends \Fuel\Core\TestCase
 
         \Fuel\Core\Config::set('pass.files_dir', APPPATH . 'tests/files');
         $this->path = \Fuel\Core\Config::get('pass.files_dir');
+
+        \Fuel\Core\Config::set('pass.pkpasses_dir', APPPATH . 'tests/passes');
     }
 
     public function test_generate_file()
@@ -77,11 +79,28 @@ class PassFileManagerTest extends \Fuel\Core\TestCase
         $manager = new Pass_File_Manager($this->pass);
 
         \Fuel\Core\File::copy(APPPATH . 'tests/certificate.p12', $manager->file_path('certificate.p12'));
+        $cert_password = '';
 
         $manager->generate_file('pass.json', $this->pass->pass_json());
         $manager->generate_file('manifest.json', $this->pass->manifest($manager->files()));
 
-        $this->assertTrue($manager->generate_signature(''));
+        $this->assertTrue($manager->generate_signature($cert_password));
         $this->assertFileExists($manager->file_path('signature'));
     }
+
+    public function test_generate_zip()
+    {
+        $manager = new Pass_File_Manager($this->pass);
+
+        \Fuel\Core\File::copy(APPPATH . 'tests/certificate.p12', $manager->file_path('certificate.p12'));
+        $cert_password = '';
+
+        $manager->generate_file('pass.json', $this->pass->pass_json());
+        $manager->generate_file('manifest.json', $this->pass->manifest($manager->files()));
+        $manager->generate_signature($cert_password);
+
+        $this->assertTrue($manager->generate_zip());
+        $this->assertFileExists($manager->pkpass_path());
+    }
+
 }

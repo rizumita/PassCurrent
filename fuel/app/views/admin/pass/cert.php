@@ -1,18 +1,11 @@
 <?php if (isset($pass)): ?>
 
-<?php if ($pass->cert): ?>
-    <p>Current certificate: <?php echo $pass->cert; ?></p>
-    <?php else: ?>
-    <p>No certificate</p>
-
-    <?php endif; ?>
-
 <?php echo Form::open(array('enctype' => 'multipart/form-data')); ?>
 
 <fieldset>
     <div class="clearfix">
         <div class="input">
-            <?php echo \Fuel\Core\Form::file('cert'); ?>
+            <?php echo \Fuel\Core\Form::file('certificate'); ?>
         </div>
     </div>
     <div class="actions">

@@ -33,16 +33,6 @@ class Controller_Admin_Pass extends Controller_Admin
                                                'logo_text' => Input::post('logo_text'),
                                                'pass_type_identifier' => Input::post('pass_type_identifier'),
                                                'team_identifier' => Input::post('team_identifier'),
-                                               'background_color' => Input::post('background_color'),
-                                               'foreground_color' => Input::post('foreground_color'),
-                                               'label_color' => Input::post('label_color'),
-                                               'signature' => Input::post('signature'),
-                                               'logo' => Input::post('logo'),
-                                               'logo2x' => Input::post('logo2x'),
-                                               'icon' => Input::post('icon'),
-                                               'icon2x' => Input::post('icon2x'),
-                                               'strip' => Input::post('strip'),
-                                               'strip2x' => Input::post('strip2x'),
                                                'barcode_message' => Input::post('barcode_message'),
                                                'barcode_format' => Input::post('barcode_format'),
                                                'offer_label' => Input::post('offer_label'),
@@ -83,16 +73,6 @@ class Controller_Admin_Pass extends Controller_Admin
             $pass->logo_text = Input::post('logo_text');
             $pass->pass_type_identifier = Input::post('pass_type_identifier');
             $pass->team_identifier = Input::post('team_identifier');
-            $pass->background_color = Input::post('background_color');
-            $pass->foreground_color = Input::post('foreground_color');
-            $pass->label_color = Input::post('label_color');
-            $pass->signature = Input::post('signature');
-            $pass->logo = Input::post('logo');
-            $pass->logo2x = Input::post('logo2x');
-            $pass->icon = Input::post('icon');
-            $pass->icon2x = Input::post('icon2x');
-            $pass->strip = Input::post('strip');
-            $pass->strip2x = Input::post('strip2x');
             $pass->barcode_message = Input::post('barcode_message');
             $pass->barcode_format = Input::post('barcode_format');
             $pass->offer_label = \Fuel\Core\Input::post('offer_label');
@@ -120,16 +100,6 @@ class Controller_Admin_Pass extends Controller_Admin
                 $pass->logo_text = $val->validated('logo_text');
                 $pass->pass_type_identifier = $val->validated('pass_type_identifier');
                 $pass->team_identifier = $val->validated('team_identifier');
-                $pass->background_color = $val->validated('background_color');
-                $pass->foreground_color = $val->validated('foreground_color');
-                $pass->label_color = $val->validated('label_color');
-                $pass->signature = $val->validated('signature');
-                $pass->logo = $val->validated('logo');
-                $pass->logo2x = $val->validated('logo2x');
-                $pass->icon = $val->validated('icon');
-                $pass->icon2x = $val->validated('icon2x');
-                $pass->strip = $val->validated('strip');
-                $pass->strip2x = $val->validated('strip2x');
                 $pass->barcode_message = $val->validated('barcode_message');
                 $pass->barcode_format = $val->validated('barcode_format');
                 $pass->offer_label = $val->validated('offer_label');
@@ -143,7 +113,6 @@ class Controller_Admin_Pass extends Controller_Admin
 
         $this->template->title = "Passes";
         $this->template->content = View::forge('admin/pass/edit');
-
     }
 
     public function action_delete($id = null)
@@ -169,13 +138,11 @@ class Controller_Admin_Pass extends Controller_Admin
 
         if (Input::method() == 'POST')
         {
-            $upload_result = $pass->get_upload_files(array('p12'));
+            $manager = new Pass_File_Manager($pass);
 
-            $error_upload = count($upload_result) > 0;
-
-            if ($error_upload)
+            if ($manager->get_upload_files(array('p12')))
             {
-                Session::set_flash('error', $upload_result);
+                Session::set_flash('error', $manager->error);
             }
             elseif ($pass and $pass->save())
             {
@@ -200,13 +167,11 @@ class Controller_Admin_Pass extends Controller_Admin
 
         if (Input::method() == 'POST')
         {
-            $upload_result = $pass->get_upload_files(array('png'));
+            $manager = new Pass_File_Manager($pass);
 
-            $error_upload = count($upload_result) > 0;
-
-            if ($error_upload)
+            if ($manager->get_upload_files(array('png')) == false)
             {
-                Session::set_flash('error', $upload_result);
+                Session::set_flash('error', $manager->error);
             }
             elseif ($pass and $pass->save())
             {
@@ -300,19 +265,67 @@ class Controller_Admin_Pass extends Controller_Admin
                                                  'Content-Length' => $info['size']));
     }
 
-    public function action_generate($id = null)
+    public function post_generate($id = null)
     {
         $pass = Model_Pass::find($id);
 
         if (!empty($pass))
         {
-            $error = $pass->generate();
-            if (!empty($error))
+            $error = $pass->generate(\Fuel\Core\Input::post('cert_password', ''));
+            if (empty($error))
+            {
+                Session::set_flash('success', e('Generated pass #' . $id));
+            }
+            else
             {
                 Session::set_flash('error', e('Could not generate pass #' . $id . ". " . $error));
             }
         }
 
         Response::redirect('admin/pass');
+    }
+
+    public function action_colors($id = null)
+    {
+        $pass = Model_Pass::find($id);
+        $val = \Fuel\Core\Validation::forge();
+        $val->add_field('background_color', 'Background Color', 'max_length[255]');
+        $val->add_field('foreground_color', 'Foreground Color', 'max_length[255]');
+        $val->add_field('label_color', 'Label Color', 'max_length[255]');
+
+        if ($val->run())
+        {
+            $pass->background_color = \Fuel\Core\Input::post('background_color');
+            $pass->foreground_color = \Fuel\Core\Input::post('foreground_color');
+            $pass->label_color = \Fuel\Core\Input::post('label_color');
+
+            if ($pass->save())
+            {
+                Session::set_flash('success', e('Set colors of pass #' . $id));
+
+                Response::redirect('admin/pass/view/' . $id);
+            }
+            else
+            {
+                Session::set_flash('error', e('Could not update pass #' . $id));
+            }
+        }
+        else
+        {
+            if (\Fuel\Core\Input::method() == 'POST')
+            {
+                $pass->background_color = $val->validated('background_color');
+                $pass->foreground_color = $val->validated('foreground_color');
+                $pass->label_color = $val->validated('label_color');
+
+                Session::set_flash('error', $val->error());
+            }
+
+            $this->template->set_global('pass', $pass, false);
+        }
+
+        $this->template->title = "Passe colors";
+        $this->template->set_safe('head', '<script type="text/javascript" src="' . \Fuel\Core\Uri::base() . 'assets/modcoder_excolor/jquery.modcoder.excolor.js"></script>');
+        $this->template->content = View::forge('admin/pass/colors');
     }
 }

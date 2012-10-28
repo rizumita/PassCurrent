@@ -1,13 +1,15 @@
 <?php if (isset($pass)): ?>
 
 <?php echo Form::open(array('enctype' => 'multipart/form-data')); ?>
+<?php $manager = new Pass_File_Manager($pass); ?>
 
 <fieldset>
     <div class="clearfix">
         <?php echo Form::label('Background 180×220', 'background'); ?>
 
-        <?php if ($pass->background) : ?>
-        <img src="<?php echo \Fuel\Core\Uri::create('admin/pass/image/' . $pass->id . '/background'); ?>" alt="Background">
+        <?php if (file_exists($manager->file_path('background.png'))) : ?>
+        <img src="<?php echo \Fuel\Core\Uri::create('admin/pass/image/' . $pass->id . '/background.png'); ?>"
+             alt="Background">
         <?php endif; ?>
 
         <div class="input">

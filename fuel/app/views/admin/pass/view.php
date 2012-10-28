@@ -25,27 +25,6 @@
 	<strong>Label color:</strong>
 	<?php echo $pass->label_color; ?></p>
 <p>
-	<strong>Signature:</strong>
-	<?php echo $pass->signature; ?></p>
-<p>
-	<strong>Logo:</strong>
-	<?php echo $pass->logo; ?></p>
-<p>
-	<strong>Logo2x:</strong>
-	<?php echo $pass->logo2x; ?></p>
-<p>
-	<strong>Icon:</strong>
-	<?php echo $pass->icon; ?></p>
-<p>
-	<strong>Icon2x:</strong>
-	<?php echo $pass->icon2x; ?></p>
-<p>
-	<strong>Strip:</strong>
-	<?php echo $pass->strip; ?></p>
-<p>
-	<strong>Strip2x:</strong>
-	<?php echo $pass->strip2x; ?></p>
-<p>
 	<strong>Barcode message:</strong>
 	<?php echo $pass->barcode_message; ?></p>
 <p>
@@ -57,6 +36,8 @@
 <p>
     <strong>Offer value:</strong>
     <?php echo $pass->offer_value; ?></p>
+
+<button class="btn btn-large span2" onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/colors/' . $pass->id); ?>';">Color</button>
 
 <?php echo Html::anchor('admin/pass/edit/'.$pass->id, 'Edit'); ?> |
 <?php echo Html::anchor('admin/pass', 'Back'); ?>

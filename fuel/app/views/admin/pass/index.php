@@ -24,10 +24,14 @@
         <td><?php echo $pass->status(); ?></td>
         <td>
             <?php if (empty($pass->file_name)): ?>
-                <?php echo Html::anchor('admin/pass/generate/' .$pass->id, 'Generate'); ?>
+            <?php echo \Fuel\Core\Form::open(array('action' => 'admin/pass/generate/' . $pass->id,
+                                                   'method' => 'POST')); ?>
+            <?php echo \Fuel\Core\Form::hidden('cert_password', ''); ?>
+            <?php echo \Fuel\Core\Form::submit('submit', 'Generate', array('class' => 'btn',
+                                                                           'onClick' => 'return generate_pkpass(' . $pass->id . ');')); ?>
             <?php else: ?>
-                <?php echo Html::anchor('admin/pass/update/' .$pass->id, 'Update', array('onclick' => "return confirm('Are you sure?')")); ?>
-             | <?php Html::anchor('admin/pass/remove/' . $pass->id, 'Remove', array('onclick' => "return confirm('Are you sure?')")); ?>
+            <?php echo Html::anchor('admin/pass/update/' . $pass->id, 'Update', array('onclick' => "return confirm('Are you sure?')")); ?>
+            | <?php Html::anchor('admin/pass/remove/' . $pass->id, 'Remove', array('onclick' => "return confirm('Are you sure?')")); ?>
             <?php endif; ?>
         </td>
         <td>

@@ -21,7 +21,7 @@ class Create_passes
 			'barcode_format' => array('constraint' => 11, 'type' => 'int'),
             'offer_label' => array('constraint' => 255, 'type' => 'varchar'),
             'offer_value' => array('constraint' => 255, 'type' => 'varchar'),
-            'file_name' => array('constraint' => 1023, 'type' => 'varchar', 'null' => true),
+            'pkpass_name' => array('constraint' => 255, 'type' => 'varchar', 'null' => true),
 			'created_at' => array('constraint' => 11, 'type' => 'int'),
 			'updated_at' => array('constraint' => 11, 'type' => 'int'),
 
