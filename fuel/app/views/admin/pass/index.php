@@ -15,7 +15,8 @@
     <tr>
 
         <td><?php echo $pass->name; ?></td>
-        <td><?php echo $pass->status(); ?></td>
+        <?php $manager = new Pass_File_Manager($pass); ?>
+        <td><?php echo \Fuel\Core\Html::anchor($manager->pkpass_url(), $pass->status()); ?></td>
         <td>
             <?php if (empty($pass->file_name)): ?>
             <?php echo \Fuel\Core\Form::open(array('action' => 'admin/pass/generate/' . $pass->id,

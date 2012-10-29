@@ -77,8 +77,6 @@ class Model_Pass extends \Orm\Model
                 'primaryFields' => array(
                     array(
                         'key' => 'offer',
-                        'label' => $this->offer_label,
-                        'value' => $this->offer_value,
                     ),
                 ))
         );

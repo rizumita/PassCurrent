@@ -202,6 +202,11 @@ class Pass_File_Manager
         return \Fuel\Core\Config::get('pass.pkpasses_dir') . DS . $this->pass->get_pkpass_name();
     }
 
+    public function pkpass_url()
+    {
+        return \Fuel\Core\Uri::create(\Fuel\Core\Config::get('pass.pkpasses_url_path')). DS . $this->pass->get_pkpass_name();
+    }
+
     private function all_images()
     {
         return array(
