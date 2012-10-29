@@ -11,7 +11,7 @@
  * @group Helper
  * @group Pass
  */
-class PassFileManagerTest extends \Fuel\Core\TestCase
+class Pass_File_Manager_Test extends \Fuel\Core\TestCase
 {
     private $pass;
     private $path;
@@ -25,8 +25,6 @@ class PassFileManagerTest extends \Fuel\Core\TestCase
         }
 
         $this->pass = Model_Pass::forge(array('name' => 'test name',
-                                              'pass_type_identifier' => 'pass.jp.caph.test-coupon',
-                                              'team_identifier' => 'xxxxxxxxx',
                                               'description' => 'desc',
                                               'logo_text' => 'sample',
                                               'barcode_message' => 'message',
@@ -74,20 +72,6 @@ class PassFileManagerTest extends \Fuel\Core\TestCase
     /*
      * テストのためにAPPPATH.'tests/certificate.p12が必要
      */
-    public function test_generate_signature()
-    {
-        $manager = new Pass_File_Manager($this->pass);
-
-        \Fuel\Core\File::copy(APPPATH . 'tests/certificate.p12', $manager->file_path('certificate.p12'));
-        $cert_password = '';
-
-        $manager->generate_file('pass.json', $this->pass->pass_json());
-        $manager->generate_file('manifest.json', $this->pass->manifest($manager->files()));
-
-        $this->assertTrue($manager->generate_signature($cert_password));
-        $this->assertFileExists($manager->file_path('signature'));
-    }
-
     public function test_generate_zip()
     {
         $manager = new Pass_File_Manager($this->pass);
@@ -97,7 +81,11 @@ class PassFileManagerTest extends \Fuel\Core\TestCase
 
         $manager->generate_file('pass.json', $this->pass->pass_json());
         $manager->generate_file('manifest.json', $this->pass->manifest($manager->files()));
-        $manager->generate_signature($cert_password);
+
+        $cert = new Certificate($manager->file_path('certificate.p12'));
+        $signature = $cert->signature($manager->file_path('manifest.json'), $manager->file_path('signature'));
+
+        $manager->generate_file('signature', $signature);
 
         $this->assertTrue($manager->generate_zip());
         $this->assertFileExists($manager->pkpass_path());

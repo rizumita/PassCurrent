@@ -93,44 +93,6 @@ class Pass_File_Manager
         }
     }
 
-    public function generate_signature($cert_password = '')
-    {
-        if (!file_exists($this->file_path('certificate.p12')))
-        {
-            $this->error = 'Certificate does not exist.';
-            return false;
-        }
-
-        $pkcs12 = file_get_contents($this->file_path('certificate.p12'));
-        $certs = array();
-        if (openssl_pkcs12_read($pkcs12, $certs, $cert_password) == true)
-        {
-            $cert_data = openssl_x509_read($certs['cert']);
-            $private_key = openssl_pkey_get_private($certs['pkey'], $cert_password);
-
-            if (file_exists(\Fuel\Core\Config::get('pass.WWDR_cert')))
-            {
-                openssl_pkcs7_sign($this->file_path('manifest.json'), $this->file_path('signature'), $cert_data, $private_key, array(), PKCS7_BINARY | PKCS7_DETACHED, \Fuel\Core\Config::get('pass.WWDR_cert'));
-            }
-            else
-            {
-                $this->error = 'WWDR Intermediate Certificate does not exist.';
-                return false;
-            }
-
-            $signature = file_get_contents($this->file_path('signature'));
-            $signature = $this->convert_PEM_to_DER($signature);
-            \Fuel\Core\File::update($this->files_dir_path(), 'signature', $signature);
-
-            return true;
-        }
-        else
-        {
-            $this->error = 'Could not read the certificate.';
-            return false;
-        }
-    }
-
     public function generate_zip()
     {
         $files = $this->files();
@@ -223,12 +185,6 @@ class Pass_File_Manager
     private function files_dir_path()
     {
         return \Fuel\Core\Config::get('pass.files_dir') . DS . $this->pass->id;
-    }
-
-    private function convert_PEM_to_DER($signature)
-    {
-        $signature = substr($signature, (strpos($signature, 'filename="smime.p7s') + 20));
-        return base64_decode(trim(substr($signature, 0, strpos($signature, '------'))));
     }
 
     public function pkpass_path()

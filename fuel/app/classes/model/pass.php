@@ -10,8 +10,6 @@ class Model_Pass extends \Orm\Model
         'name',
         'description',
         'logo_text',
-        'pass_type_identifier',
-        'team_identifier',
         'background_color',
         'foreground_color',
         'label_color',
@@ -50,28 +48,24 @@ class Model_Pass extends \Orm\Model
         $val = Validation::forge($factory);
         $val->add_field('name', 'Name', 'required|max_length[255]');
 //        $val->add_field('description', 'Description', '');
-        $val->add_field('logo_text', 'Logo Text', 'required|max_length[255]');
-        $val->add_field('pass_type_identifier', 'Pass Type Identifier', 'required|max_length[255]');
-        $val->add_field('team_identifier', 'Team Identifier', 'required|max_length[255]');
+        $val->add_field('logo_text', 'Logo Text', 'max_length[255]');
         $val->add_field('background_color', 'Background Color', 'max_length[255]');
         $val->add_field('foreground_color', 'Foreground Color', 'max_length[255]');
         $val->add_field('label_color', 'Label Color', 'max_length[255]');
-        $val->add_field('thumbnail', 'Thumbnail', 'max_length[255]');
-        $val->add_field('thumbnail2x', 'Thumbnail2x', 'max_length[255]');
         $val->add_field('barcode_message', 'Barcode Message', 'max_length[255]');
         $val->add_field('barcode_format', 'Barcode Format', 'valid_string[numeric]');
-        $val->add_field('offer_value', 'Offer Value', 'required|max_length[255]');
-        $val->add_field('offer_label', 'Offer Label', 'required|max_length[255]');
+        $val->add_field('offer_value', 'Offer Value', 'max_length[255]');
+        $val->add_field('offer_label', 'Offer Label', 'max_length[255]');
 
         return $val;
     }
 
-    public function pass_json()
+    public function pass_json($pass_type_identifier = '', $team_identifier = '')
     {
         $array = array(
             'formatVersion' => 1,
-            'passTypeIdentifier' => $this->pass_type_identifier,
-            'teamIdentifier' => $this->team_identifier,
+            'passTypeIdentifier' => $pass_type_identifier,
+            'teamIdentifier' => $team_identifier,
             'serialNumber' => '001',
             'organizationName' => '',
             'description' => $this->description,
@@ -158,9 +152,11 @@ class Model_Pass extends \Orm\Model
         }
 
         $manager = new Pass_File_Manager($this);
-        if ($manager->generate_file('pass.json', $this->pass_json())
+        $cert=new Certificate($manager->file_path('certificate.p12'), $cert_password);
+
+        if ($manager->generate_file('pass.json', $this->pass_json($cert->pass_type_identifier(), $cert->team_identifier()))
             && $manager->generate_file('manifest.json', $this->manifest($manager->files()))
-            && $manager->generate_signature($cert_password)
+            && $manager->generate_file('signature', $cert->signature($manager->file_path('manifest.json'), $manager->file_path('signature')))
             && $manager->generate_zip()
         )
         {

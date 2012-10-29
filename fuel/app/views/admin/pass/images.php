@@ -108,4 +108,4 @@
 
 <?php endif; ?>
 
-<p><?php echo Html::anchor('admin/pass', 'Back'); ?></p>
+<p><?php echo Html::anchor('admin/pass/view/' . $pass->id, 'Back'); ?></p>

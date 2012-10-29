@@ -31,8 +31,6 @@ class Controller_Admin_Pass extends Controller_Admin
                                                'name' => Input::post('name'),
                                                'description' => Input::post('description'),
                                                'logo_text' => Input::post('logo_text'),
-                                               'pass_type_identifier' => Input::post('pass_type_identifier'),
-                                               'team_identifier' => Input::post('team_identifier'),
                                                'barcode_message' => Input::post('barcode_message'),
                                                'barcode_format' => Input::post('barcode_format'),
                                                'offer_label' => Input::post('offer_label'),
@@ -43,7 +41,7 @@ class Controller_Admin_Pass extends Controller_Admin
                 {
                     Session::set_flash('success', e('Added pass #' . $pass->id . '.'));
 
-                    Response::redirect('admin/pass');
+                    Response::redirect('admin/pass/view/' . $pass->id);
                 }
                 else
                 {
@@ -71,8 +69,6 @@ class Controller_Admin_Pass extends Controller_Admin
             $pass->name = Input::post('name');
             $pass->description = Input::post('description');
             $pass->logo_text = Input::post('logo_text');
-            $pass->pass_type_identifier = Input::post('pass_type_identifier');
-            $pass->team_identifier = Input::post('team_identifier');
             $pass->barcode_message = Input::post('barcode_message');
             $pass->barcode_format = Input::post('barcode_format');
             $pass->offer_label = \Fuel\Core\Input::post('offer_label');
@@ -98,8 +94,6 @@ class Controller_Admin_Pass extends Controller_Admin
                 $pass->name = $val->validated('name');
                 $pass->description = $val->validated('description');
                 $pass->logo_text = $val->validated('logo_text');
-                $pass->pass_type_identifier = $val->validated('pass_type_identifier');
-                $pass->team_identifier = $val->validated('team_identifier');
                 $pass->barcode_message = $val->validated('barcode_message');
                 $pass->barcode_format = $val->validated('barcode_format');
                 $pass->offer_label = $val->validated('offer_label');
