@@ -187,7 +187,9 @@ class Controller_Admin_Pass extends Controller_Admin
 
         $this->template->set_global('pass', $pass);
         $this->template->title = "Pass Images";
-        $this->template->content = View::forge('admin/pass/images');
+        $images_vm = ViewModel::forge('admin/pass/images');
+        $images_vm->pass = $pass;
+        $this->template->content = $images_vm;
     }
 
     public function action_locations($id = null)
@@ -250,7 +252,8 @@ class Controller_Admin_Pass extends Controller_Admin
     public function action_image($id = null, $name = null)
     {
         $pass = Model_Pass::find($id);
-        $path = $pass->file_path($pass->{$name});
+        $manager = new Pass_File_Manager($pass);
+        $path = $manager->file_path($name . '.png');
 
         $body = null;
 

@@ -37,7 +37,9 @@
     <strong>Offer value:</strong>
     <?php echo $pass->offer_value; ?></p>
 
-<button class="btn btn-large span2" onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/colors/' . $pass->id); ?>';">Color</button>
+<button class="btn btn-large span2" onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/images/' . $pass->id); ?>';">Images</button>
+
+<button class="btn btn-large span2" onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/colors/' . $pass->id); ?>';">Colors</button>
 
 <?php echo Html::anchor('admin/pass/edit/'.$pass->id, 'Edit'); ?> |
 <?php echo Html::anchor('admin/pass', 'Back'); ?>
