@@ -17,8 +17,6 @@ class Create_passes
 			'signature' => array('constraint' => 255, 'type' => 'varchar', 'null' => true),
 			'barcode_message' => array('constraint' => 255, 'type' => 'varchar', 'null' => true),
 			'barcode_format' => array('constraint' => 11, 'type' => 'int', 'null' => true),
-            'offer_label' => array('constraint' => 255, 'type' => 'varchar', 'null' => true),
-            'offer_value' => array('constraint' => 255, 'type' => 'varchar', 'null' => true),
             'pkpass_name' => array('constraint' => 255, 'type' => 'varchar', 'null' => true),
 			'created_at' => array('constraint' => 11, 'type' => 'int'),
 			'updated_at' => array('constraint' => 11, 'type' => 'int'),

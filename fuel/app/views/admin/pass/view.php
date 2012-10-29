@@ -17,12 +17,6 @@
     <strong>Barcode format:</strong>
     <?php echo $pass->barcode_format_readable(); ?></p>
 <?php endif; ?>
-<p>
-    <strong>Offer label:</strong>
-    <?php echo $pass->offer_label; ?></p>
-<p>
-    <strong>Offer value:</strong>
-    <?php echo $pass->offer_value; ?></p>
 
 <div class="container">
     <button class="btn btn-large span2"

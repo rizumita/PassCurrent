@@ -15,8 +15,6 @@ class Model_Pass extends \Orm\Model
         'label_color',
         'barcode_message',
         'barcode_format',
-        'offer_value',
-        'offer_label',
         'pkpass_name',
         'created_at',
         'updated_at',
@@ -61,8 +59,6 @@ class Model_Pass extends \Orm\Model
         $val->add_field('label_color', 'Label Color', 'max_length[255]');
         $val->add_field('barcode_message', 'Barcode Message', 'max_length[255]');
         $val->add_field('barcode_format', 'Barcode Format', 'valid_string[numeric]');
-        $val->add_field('offer_value', 'Offer Value', 'max_length[255]');
-        $val->add_field('offer_label', 'Offer Label', 'max_length[255]');
 
         return $val;
     }

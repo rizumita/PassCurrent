@@ -33,8 +33,6 @@ class Controller_Admin_Pass extends Controller_Admin
                                                'logo_text' => Input::post('logo_text'),
                                                'barcode_message' => Input::post('barcode_message'),
                                                'barcode_format' => Input::post('barcode_format'),
-                                               'offer_label' => Input::post('offer_label'),
-                                               'offer_value' => Input::post('offer_value'),
                                           ));
 
                 if ($pass and $pass->save())
@@ -71,8 +69,6 @@ class Controller_Admin_Pass extends Controller_Admin
             $pass->logo_text = Input::post('logo_text');
             $pass->barcode_message = Input::post('barcode_message');
             $pass->barcode_format = Input::post('barcode_format');
-            $pass->offer_label = \Fuel\Core\Input::post('offer_label');
-            $pass->offer_value = \Fuel\Core\Input::post('offer_value');
 
             if ($pass->save())
             {
@@ -96,8 +92,6 @@ class Controller_Admin_Pass extends Controller_Admin
                 $pass->logo_text = $val->validated('logo_text');
                 $pass->barcode_message = $val->validated('barcode_message');
                 $pass->barcode_format = $val->validated('barcode_format');
-                $pass->offer_label = $val->validated('offer_label');
-                $pass->offer_value = $val->validated('offer_value');
 
                 Session::set_flash('error', $val->error());
             }

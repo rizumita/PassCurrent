@@ -32,8 +32,6 @@ class Pass_File_Manager_Test extends \Fuel\Core\TestCase
                                               'foreground_color' => 'rgb(0,0,0)',
                                               'background_color' => 'rgb(1,1,1)',
                                               'label_color' => 'rgb(2,2,2)',
-                                              'offer_label' => 'samaplelabel',
-                                              'offer_value' => 'samplevalue',
                                         ));
         $this->pass->save();
 

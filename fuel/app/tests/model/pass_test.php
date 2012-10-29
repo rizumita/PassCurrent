@@ -23,8 +23,6 @@ class Pass_Test extends \Fuel\Core\TestCase
                                               'logo_text' => 'sample',
                                               'barcode_message' => 'message',
                                               'barcode_format' => 0,
-                                              'offer_label' => 'samaplelabel',
-                                              'offer_value' => 'samplevalue',
                                         ));
         $this->pass->locations[] = Model_Location::forge(array('latitude' => 1.01, 'longitude' => 1.02));
         $this->pass->locations[] = Model_Location::forge(array('latitude' => 2.03, 'longitude' => 2.04,
