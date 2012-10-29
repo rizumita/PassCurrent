@@ -10,12 +10,6 @@
 	<strong>Logo text:</strong>
 	<?php echo $pass->logo_text; ?></p>
 <p>
-    <strong>Pass Type Identifier:</strong>
-    <?php echo $pass->pass_type_identifier; ?></p>
-<p>
-    <strong>Team Identifier:</strong>
-    <?php echo $pass->team_identifier; ?></p>
-<p>
 	<strong>Background color:</strong>
 	<?php echo $pass->background_color; ?></p>
 <p>

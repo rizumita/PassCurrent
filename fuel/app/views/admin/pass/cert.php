@@ -1,4 +1,8 @@
 <?php if (isset($pass)): ?>
+<?php $manager = new Pass_File_Manager($pass); ?>
+<?php if (file_exists($manager->file_path('certificate.p12'))): ?>
+    <p>File uploaded.</p>
+    <?php endif; ?>
 
 <?php echo Form::open(array('enctype' => 'multipart/form-data')); ?>
 
