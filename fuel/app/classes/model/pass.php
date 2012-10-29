@@ -29,6 +29,13 @@ class Model_Pass extends \Orm\Model
             'key_to' => 'pass_id',
             'cascade_save' => true,
             'cascade_delete' => true,
+        ),
+        'fields' => array(
+            'key_from' => 'id',
+            'model_to' => 'Model_Field',
+            'key_to' => 'pass_id',
+            'cascade_save' => true,
+            'cascade_delete' => true,
         )
     );
 
@@ -145,10 +152,13 @@ class Model_Pass extends \Orm\Model
 
     public function status()
     {
-        $manager=new Pass_File_Manager($this);
-        if(file_exists($manager->pkpass_path())){
+        $manager = new Pass_File_Manager($this);
+        if (file_exists($manager->pkpass_path()))
+        {
             return 'Generated';
-        } else {
+        }
+        else
+        {
             return 'Not generated';
         }
     }
