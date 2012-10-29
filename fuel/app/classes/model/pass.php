@@ -134,23 +134,6 @@ class Model_Pass extends \Orm\Model
 
     public function generate($cert_password = '')
     {
-        if (empty($this->pass_type_identifier))
-        {
-            return 'Set pass type identifier.';
-        }
-        elseif (empty($this->team_identifier))
-        {
-            return 'Set team identifier.';
-        }
-        elseif (empty($this->offer_label))
-        {
-            return 'Set offer label.';
-        }
-        elseif (empty($this->offer_value))
-        {
-            return 'Set offer value.';
-        }
-
         $manager = new Pass_File_Manager($this);
         $cert=new Certificate($manager->file_path('certificate.p12'), $cert_password);
 
