@@ -5,9 +5,6 @@
     <thead>
     <tr>
         <th>Name</th>
-        <th>Certificate File</th>
-        <th>Image Files</th>
-        <th>Location</th>
         <th>Status</th>
         <th>File</th>
         <th></th>
@@ -18,9 +15,6 @@
     <tr>
 
         <td><?php echo $pass->name; ?></td>
-        <td><?php echo Html::anchor('admin/pass/cert/' . $pass->id, 'Configure') ?></td>
-        <td><?php echo Html::anchor('admin/pass/images/' . $pass->id, 'Configure') ?></td>
-        <td><?php echo Html::anchor('admin/pass/locations/' . $pass->id, 'Configure') ?></td>
         <td><?php echo $pass->status(); ?></td>
         <td>
             <?php if (empty($pass->file_name)): ?>

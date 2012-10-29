@@ -46,5 +46,5 @@
     </tbody>
 </table>
 
-<p><?php echo \Fuel\Core\Html::anchor('admin/pass', 'Back'); ?></p>
+<p><?php echo \Fuel\Core\Html::anchor('admin/pass/view/' . $pass->id, 'Back'); ?></p>
 <?php endif; ?>

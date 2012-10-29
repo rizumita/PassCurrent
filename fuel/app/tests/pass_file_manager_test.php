@@ -91,4 +91,14 @@ class Pass_File_Manager_Test extends \Fuel\Core\TestCase
         $this->assertFileExists($manager->pkpass_path());
     }
 
+    public function test_required_images()
+    {
+        $manager = new Pass_File_Manager($this->pass);
+
+        $this->assertEquals(12, count($manager->required_images_readable()));
+
+        $manager->generate_file('background.png', '');
+        $this->assertEquals(11, count($manager->required_images_readable()));
+    }
+
 }

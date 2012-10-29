@@ -28,7 +28,10 @@ class Pass_File_Manager
         }
     }
 
-    public function get_upload_files($whitelist = array())
+    /*
+     * $name: Imageの場合に指定
+     */
+    public function get_upload_files($whitelist = array(), $name = null)
     {
         $result = array();
 
@@ -45,7 +48,15 @@ class Pass_File_Manager
             $errors = \Fuel\Core\Upload::get_errors();
             foreach ($errors as $error)
             {
-                $name = $error['field'];
+                if (is_null($name))
+                {
+                    $name = $error['field'];
+                }
+                else
+                {
+                    $name = str_replace('.png', '', $name);
+                }
+
                 $name = str_replace('@2x', ' retina', $name);
                 $this->error = 'Error ' . $name . ' upload';
             }
@@ -57,15 +68,14 @@ class Pass_File_Manager
         $files = \Fuel\Core\Upload::get_files();
         foreach ($files as $file)
         {
-            $name = $file['field'];
+            if (is_null($name))
+            {
+                $name = $file['field'];
+            }
 
             if ($name == 'certificate')
             {
                 $name .= '.p12';
-            }
-            else
-            {
-                $name .= '.png';
             }
 
             $this->remove_file($this->file_path($name));
@@ -157,7 +167,7 @@ class Pass_File_Manager
         return file_exists($this->files_dir_path());
     }
 
-    private function remove_file($path = null)
+    public function remove_file($path = null)
     {
         if (file_exists($path))
         {
@@ -190,6 +200,39 @@ class Pass_File_Manager
     public function pkpass_path()
     {
         return \Fuel\Core\Config::get('pass.pkpasses_dir') . DS . $this->pass->get_pkpass_name();
+    }
+
+    private function all_images()
+    {
+        return array('icon.png', 'icon@2x.png', 'logo.png', 'logo@2x.png', 'background.png', 'background@2x.png',
+                     'footer.png', 'footer@2x.png', 'strip.png', 'strip@2x.png', 'thumbnail.png', 'thumbnail@2x.png');
+    }
+
+    public function required_images()
+    {
+        $this_obj = $this;
+
+        return array_filter($this->all_images(), function ($image_name) use ($this_obj)
+        {
+            if (file_exists($this_obj->file_path($image_name)))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        });
+    }
+
+    public function required_images_readable()
+    {
+        return array_map(function ($image_name)
+        {
+            $image_name = str_replace('.png', '', $image_name);
+            $image_name = preg_replace('/@2x/', ' Retina', $image_name);
+            return ucfirst($image_name);
+        }, $this->required_images());
     }
 
 }

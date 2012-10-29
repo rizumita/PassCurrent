@@ -162,8 +162,11 @@ class Controller_Admin_Pass extends Controller_Admin
         if (Input::method() == 'POST')
         {
             $manager = new Pass_File_Manager($pass);
+            $image_selection_number = \Fuel\Core\Input::post('upload_image_selection');
+            $images = $manager->required_images();
+            $name = $images[$image_selection_number];
 
-            if ($manager->get_upload_files(array('png')) == false)
+            if ($manager->get_upload_files(array('png'), $name) == false)
             {
                 Session::set_flash('error', $manager->error);
             }
@@ -171,7 +174,7 @@ class Controller_Admin_Pass extends Controller_Admin
             {
                 Session::set_flash('success', e('Added pass #' . $pass->id . '.'));
 
-                Response::redirect('admin/pass');
+                Response::redirect('admin/pass/images/' . $pass->id);
             }
             else
             {
@@ -184,6 +187,23 @@ class Controller_Admin_Pass extends Controller_Admin
         $images_vm = ViewModel::forge('admin/pass/images');
         $images_vm->pass = $pass;
         $this->template->content = $images_vm;
+    }
+
+    public function action_delete_image($id, $name)
+    {
+        if ($pass = Model_Pass::find($id))
+        {
+            $name .= '.png';
+
+            $manager = new Pass_File_Manager($pass);
+            $manager->remove_file($manager->file_path($name));
+
+            Session::set_flash('success', e('Deleted ' . $name));
+
+            Response::redirect('admin/pass/images/' . $pass->id);
+        }
+
+        throw new \Fuel\Core\HttpNotFoundException;
     }
 
     public function action_locations($id = null)
