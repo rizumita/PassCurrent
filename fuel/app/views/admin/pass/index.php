@@ -6,7 +6,7 @@
     <tr>
         <th>Name</th>
         <th>Status</th>
-        <th>File</th>
+        <th>Action</th>
         <th></th>
     </tr>
     </thead>

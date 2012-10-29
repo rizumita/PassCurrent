@@ -127,15 +127,36 @@ class Model_Pass extends \Orm\Model
         }
     }
 
+    public function barcode_format_readable()
+    {
+        if ($this->barcode_format == self::PKBarcodeFormatQR)
+        {
+            return 'QR';
+        }
+        elseif ($this->barcode_format == self::PKBarcodeFormatPDF417)
+        {
+            return 'PDF417';
+        }
+        else
+        {
+            return 'Aztec';
+        }
+    }
+
     public function status()
     {
-        return '';
+        $manager=new Pass_File_Manager($this);
+        if(file_exists($manager->pkpass_path())){
+            return 'Generated';
+        } else {
+            return 'Not generated';
+        }
     }
 
     public function generate($cert_password = '')
     {
         $manager = new Pass_File_Manager($this);
-        $cert=new Certificate($manager->file_path('certificate.p12'), $cert_password);
+        $cert = new Certificate($manager->file_path('certificate.p12'), $cert_password);
 
         if ($manager->generate_file('pass.json', $this->pass_json($cert->pass_type_identifier(), $cert->team_identifier()))
             && $manager->generate_file('manifest.json', $this->manifest($manager->files()))
