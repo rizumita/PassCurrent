@@ -204,8 +204,14 @@ class Pass_File_Manager
 
     private function all_images()
     {
-        return array('icon.png', 'icon@2x.png', 'logo.png', 'logo@2x.png', 'background.png', 'background@2x.png',
-                     'footer.png', 'footer@2x.png', 'strip.png', 'strip@2x.png', 'thumbnail.png', 'thumbnail@2x.png');
+        return array(
+            'icon.png', 'icon@2x.png',
+            'logo.png', 'logo@2x.png',
+//            'background.png', 'background@2x.png',
+//            'footer.png', 'footer@2x.png',
+            'strip.png', 'strip@2x.png',
+//            'thumbnail.png', 'thumbnail@2x.png',
+        );
     }
 
     public function required_images()
