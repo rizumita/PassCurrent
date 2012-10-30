@@ -39,7 +39,6 @@ class Pass_Test extends \Fuel\Core\TestCase
         $this->assertRegExp('/\{.*"description":"desc".*\}/', $this->pass->pass_json());
         $this->assertRegExp('/\{.*"logoText":"sample".*\}/', $this->pass->pass_json());
         $this->assertRegExp('/\{.*"barcode":\{"message":"message","format":"PKBarcodeFormatQR","messageEncoding":"UTF-8"\}.*\}/', $this->pass->pass_json());
-        $this->assertRegExp('/\{.*"coupon":\{"primaryFields":\[\{"key":"offer","label":"samaplelabel","value":"samplevalue"\}\]\}.*\}/', $this->pass->pass_json());
         $this->assertRegExp('/\{.*"locations":\[\{"latitude":1.01,"longitude":1.02\},\{"latitude":2.03,"longitude":2.04,"altitude":2.05,"relevantText":"text"\}\].*\}/', $this->pass->pass_json());
     }
 
@@ -59,6 +58,16 @@ class Pass_Test extends \Fuel\Core\TestCase
 
         $this->assertRegExp('/.+\.pkpass/', $this->pass->get_pkpass_name());
         $this->assertRegExp('/.+\.pkpass/', $this->pass->pkpass_name);
+    }
+
+    public function test_primary_field()
+    {
+        $this->assertNull($this->pass->primary_field());
+
+        $this->pass->set_primary_field('testlabel', 'testvalue');
+
+        $this->assertEquals('testlabel', $this->pass->primary_field()->label);
+        $this->assertEquals('testvalue', $this->pass->primary_field()->value);
     }
 
 }

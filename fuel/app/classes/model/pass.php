@@ -52,7 +52,6 @@ class Model_Pass extends \Orm\Model
     {
         $val = Validation::forge($factory);
         $val->add_field('name', 'Name', 'required|max_length[255]');
-//        $val->add_field('description', 'Description', '');
         $val->add_field('logo_text', 'Logo Text', 'max_length[255]');
         $val->add_field('background_color', 'Background Color', 'max_length[255]');
         $val->add_field('foreground_color', 'Foreground Color', 'max_length[255]');
@@ -73,13 +72,16 @@ class Model_Pass extends \Orm\Model
             'organizationName' => '',
             'description' => $this->description,
             'logoText' => $this->logo_text,
-            'coupon' => array(
-                'primaryFields' => array(
-                    array(
-                        'key' => 'offer',
-                    ),
-                ))
         );
+
+        if ($primary_field = $this->primary_field())
+        {
+            $array['coupon'] = array(
+                'primaryFields' => array(
+                    $primary_field->to_array(),
+                ),
+            );
+        }
 
         if (!empty($this->foreground_color))
         {
@@ -202,6 +204,46 @@ class Model_Pass extends \Orm\Model
         $this->save();
 
         return $this->pkpass_name;
+    }
+
+    public function set_primary_field($label = '', $value = '')
+    {
+        $field = $this->primary_field();
+
+        if (is_null($field))
+        {
+            $field = Model_Field::forge(array('type' => Model_Field::PrimaryField,
+                                              'key' => 'offer',
+                                              'label' => $label,
+                                              'value' => $value));
+            $this->fields[] = $field;
+            $this->save();
+        }
+        else
+        {
+            $field->label = $label;
+            $field->value = $value;
+            $field->save();
+        }
+
+        return true;
+    }
+
+    public function primary_field()
+    {
+        $fields = array_filter($this->fields, function ($field)
+        {
+            return $field->type == Model_Field::PrimaryField;
+        });
+
+        if (count($fields) > 0)
+        {
+            return array_shift($fields);
+        }
+        else
+        {
+            return null;
+        }
     }
 
 }

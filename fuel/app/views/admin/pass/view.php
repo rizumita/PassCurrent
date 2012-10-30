@@ -36,6 +36,11 @@
             onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/locations/' . $pass->id); ?>';">
         Locations
     </button>
+
+    <button class="btn btn-large span2"
+            onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/fields/' . $pass->id . '/primary'); ?>';">
+        Primary Fields
+    </button>
 </div>
 
 <?php echo Html::anchor('admin/pass/edit/' . $pass->id, 'Edit'); ?> |

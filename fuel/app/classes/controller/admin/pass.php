@@ -335,8 +335,40 @@ class Controller_Admin_Pass extends Controller_Admin
             $this->template->set_global('pass', $pass, false);
         }
 
-        $this->template->title = "Passe colors";
+        $this->template->title = "Pass colors";
         $this->template->set_safe('head', '<script type="text/javascript" src="' . \Fuel\Core\Uri::base() . 'assets/modcoder_excolor/jquery.modcoder.excolor.js"></script>');
         $this->template->content = View::forge('admin/pass/colors');
     }
+
+    public function action_fields($id, $type)
+    {
+        $pass = Model_Pass::find($id);
+
+        if (\Fuel\Core\Input::method() == 'POST')
+        {
+            if ($type == 'primary')
+            {
+                $pass->set_primary_field(\Fuel\Core\Input::post('label', ''), \Fuel\Core\Input::post('value', ''));
+                Session::set_flash('success', e('Added ' . $type . ' field.'));
+            }
+            else
+            {
+                $pass->{'set_' . $type . '_field'}(\Fuel\Core\Input::post());
+                Session::set_flash('success', e('Added ' . $type . ' field.'));
+            }
+        }
+
+        if ($type == 'primary')
+        {
+            $this->template->set_global('field', $pass->primary_field(), false);
+        }
+        else
+        {
+            $this->template->set_global('fields', $pass->{$type . '_fields'}(), false);
+        }
+        $this->template->set_global('pass', $pass, false);
+        $this->template->title = "Pass " . $type . ' fields';
+        $this->template->content = View::forge('admin/pass/' . $type . 'fields');
+    }
+
 }
