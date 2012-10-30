@@ -1,0 +1,437 @@
+<?php
+class Controller_Admin_Pass extends Controller_Admin
+{
+
+    public function action_index()
+    {
+        $data['passes'] = Model_Pass::find('all');
+        $this->template->title = "Passes";
+        $this->template->content = View::forge('admin/pass/index', $data);
+
+    }
+
+    public function action_view($id = null)
+    {
+        $data['pass'] = Model_Pass::find($id);
+
+        $this->template->title = "Pass";
+        $this->template->content = View::forge('admin/pass/view', $data);
+
+    }
+
+    public function action_create()
+    {
+        if (Input::method() == 'POST')
+        {
+            $val = Model_Pass::validate('create');
+
+            if ($val->run())
+            {
+                $relevant_date = 0;
+                if (\Fuel\Core\Input::post('relevant_date', false))
+                {
+                    $relevant_date = \Fuel\Core\Date::create_from_string(\Fuel\Core\Input::post('relevant_date'))
+                        ->get_timestamp();
+                }
+
+                $pass = Model_Pass::forge(array(
+                                               'name' => Input::post('name'),
+                                               'description' => Input::post('description'),
+                                               'logo_text' => Input::post('logo_text'),
+                                               'barcode_message' => Input::post('barcode_message'),
+                                               'barcode_format' => Input::post('barcode_format'),
+                                               'relevant_date' => $relevant_date,
+                                          ));
+
+                if ($pass and $pass->save())
+                {
+                    Session::set_flash('success', e('Added pass #' . $pass->id . '.'));
+
+                    Response::redirect('admin/pass/view/' . $pass->id);
+                }
+                else
+                {
+                    Session::set_flash('error', e('Could not save pass.'));
+                }
+            }
+            else
+            {
+                Session::set_flash('error', $val->error());
+            }
+        }
+
+        $this->template->title = "Passes";
+        $this->template->content = View::forge('admin/pass/create');
+
+    }
+
+    public function action_edit($id = null)
+    {
+        $pass = Model_Pass::find($id);
+        $val = Model_Pass::validate('edit');
+
+        if ($val->run())
+        {
+            $pass->name = Input::post('name');
+            $pass->description = Input::post('description');
+            $pass->logo_text = Input::post('logo_text');
+            $pass->barcode_message = Input::post('barcode_message');
+            $pass->barcode_format = Input::post('barcode_format');
+            $relevant_date = \Fuel\Core\Input::post('relevant_date', 0);
+            if ($relevant_date != 0)
+            {
+                $pass->relevant_date = \Fuel\Core\Date::create_from_string($relevant_date, 'mysql')->get_timestamp();
+            }
+            else
+            {
+                $pass->relevant_date = 0;
+            }
+
+            if ($pass->save())
+            {
+                Session::set_flash('success', e('Updated pass #' . $id));
+
+                Response::redirect('admin/pass');
+            }
+
+            else
+            {
+                Session::set_flash('error', e('Could not update pass #' . $id));
+            }
+        }
+
+        else
+        {
+            if (Input::method() == 'POST')
+            {
+                $pass->name = $val->validated('name');
+                $pass->description = $val->validated('description');
+                $pass->logo_text = $val->validated('logo_text');
+                $pass->barcode_message = $val->validated('barcode_message');
+                $pass->barcode_format = $val->validated('barcode_format');
+                $pass->relevant_date = \Fuel\Core\Date::create_from_string($val->validated('relevant_date'), 'mysql')
+                    ->get_timestamp();
+
+                Session::set_flash('error', $val->error());
+            }
+
+            $this->template->set_global('pass', $pass, false);
+        }
+
+        $this->template->title = "Passes";
+        $this->template->content = View::forge('admin/pass/edit');
+    }
+
+    public function action_delete($id = null)
+    {
+        if ($pass = Model_Pass::find($id))
+        {
+            $pass->delete();
+
+            Session::set_flash('success', e('Deleted pass #' . $id));
+        }
+
+        else
+        {
+            Session::set_flash('error', e('Could not delete pass #' . $id));
+        }
+
+        Response::redirect('admin/pass');
+    }
+
+    public function action_cert($id = null)
+    {
+        $pass = Model_Pass::find($id);
+
+        if (Input::method() == 'POST')
+        {
+            $manager = new Pass_File_Manager($pass);
+
+            if ($manager->get_upload_files(array('p12')))
+            {
+                Session::set_flash('error', $manager->error);
+            }
+            elseif ($pass and $pass->save())
+            {
+                Session::set_flash('success', e('Added pass #' . $pass->id . '.'));
+
+                Response::redirect('admin/pass');
+            }
+            else
+            {
+                Session::set_flash('error', e('Could not save pass.'));
+            }
+        }
+
+        $this->template->set_global('pass', $pass);
+        $this->template->title = "Pass Certificate";
+        $this->template->content = View::forge('admin/pass/cert');
+    }
+
+    public function action_images($id = null)
+    {
+        $pass = Model_Pass::find($id);
+
+        if (Input::method() == 'POST')
+        {
+            $manager = new Pass_File_Manager($pass);
+            $image_selection_number = \Fuel\Core\Input::post('upload_image_selection');
+            $images = $manager->required_images();
+            $name = $images[$image_selection_number];
+
+            if ($manager->get_upload_files(array('png'), $name) == false)
+            {
+                Session::set_flash('error', $manager->error);
+            }
+            elseif ($pass and $pass->save())
+            {
+                Session::set_flash('success', e('Added pass #' . $pass->id . '.'));
+
+                Response::redirect('admin/pass/images/' . $pass->id);
+            }
+            else
+            {
+                Session::set_flash('error', e('Could not save pass.'));
+            }
+        }
+
+        $this->template->set_global('pass', $pass);
+        $this->template->title = "Pass Images";
+        $images_vm = ViewModel::forge('admin/pass/images');
+        $images_vm->pass = $pass;
+        $this->template->content = $images_vm;
+    }
+
+    public function action_delete_image($id, $name)
+    {
+        if ($pass = Model_Pass::find($id))
+        {
+            $name .= '.png';
+
+            $manager = new Pass_File_Manager($pass);
+            $manager->remove_file($manager->file_path($name));
+
+            Session::set_flash('success', e('Deleted ' . $name));
+
+            Response::redirect('admin/pass/images/' . $pass->id);
+        }
+
+        throw new \Fuel\Core\HttpNotFoundException;
+    }
+
+    public function action_locations($id = null)
+    {
+        $pass = Model_Pass::find($id);
+
+        if (Input::method() == 'POST')
+        {
+            $val = Model_Location::validate('create');
+            if ($val->run())
+            {
+                $location = Model_Location::forge(array(
+                                                       'latitude' => \Fuel\Core\Input::post('latitude'),
+                                                       'longitude' => \Fuel\Core\Input::post('longitude'),
+                                                       'altitude' => \Fuel\Core\Input::post('altitude', null),
+                                                       'relevant_text' => \Fuel\Core\Input::post('relevant_text', null),
+                                                  ));
+                $pass->locations[] = $location;
+
+                if ($location and $pass->save())
+                {
+                    Session::set_flash('success', e('Added location #' . $location->id . '.'));
+                    \Fuel\Core\Response::redirect('admin/pass/locations/' . $id);
+                    return;
+                }
+                else
+                {
+                    Session::set_flash('error', e('Could not save location.'));
+                }
+            }
+            else
+            {
+                Session::set_flash('error', $val->error());
+            }
+        }
+
+        $this->template->set_global('pass', $pass, false);
+        $this->template->title = "Pass Locations";
+        $this->template->content = View::forge('admin/pass/locations');
+    }
+
+    public function action_delete_location($id = null)
+    {
+        if ($location = Model_Location::find($id))
+        {
+            $pass = $location->pass;
+            $location->delete();
+
+            Session::set_flash('success', e('Deleted location #' . $id));
+
+            Response::redirect('admin/pass/locations/' . $pass->id);
+        }
+        else
+        {
+            Session::set_flash('error', e('Could not delete location #' . $id));
+            Response::redirect('admin/pass');
+        }
+    }
+
+    public function action_image($id = null, $name = null)
+    {
+        $pass = Model_Pass::find($id);
+        $manager = new Pass_File_Manager($pass);
+        $path = $manager->file_path($name . '.png');
+
+        $body = null;
+
+        if (file_exists($path))
+        {
+            $info = \Fuel\Core\File::file_info($path);
+            $body = file_get_contents($path);
+        }
+
+        return Response::forge($body, 200, array('Content-Type' => 'image/png',
+                                                 'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
+                                                 'Content-Length' => $info['size']));
+    }
+
+    public function post_generate($id = null)
+    {
+        $pass = Model_Pass::find($id);
+
+        if (!empty($pass))
+        {
+            $error = $pass->generate(\Fuel\Core\Input::post('cert_password_' . $pass->id, ''));
+            if (empty($error))
+            {
+                Session::set_flash('success', e('Generated pass #' . $id));
+            }
+            else
+            {
+                Session::set_flash('error', e('Could not generate pass #' . $id . ". " . $error));
+            }
+        }
+
+        Response::redirect('admin/pass');
+    }
+
+    public function action_colors($id = null)
+    {
+        $pass = Model_Pass::find($id);
+        $val = \Fuel\Core\Validation::forge();
+        $val->add_field('background_color', 'Background Color', 'max_length[255]');
+        $val->add_field('foreground_color', 'Foreground Color', 'max_length[255]');
+        $val->add_field('label_color', 'Label Color', 'max_length[255]');
+
+        if ($val->run())
+        {
+            $pass->background_color = \Fuel\Core\Input::post('background_color');
+            $pass->foreground_color = \Fuel\Core\Input::post('foreground_color');
+            $pass->label_color = \Fuel\Core\Input::post('label_color');
+
+            if ($pass->save())
+            {
+                Session::set_flash('success', e('Set colors of pass #' . $id));
+
+                Response::redirect('admin/pass/view/' . $id);
+            }
+            else
+            {
+                Session::set_flash('error', e('Could not update pass #' . $id));
+            }
+        }
+        else
+        {
+            if (\Fuel\Core\Input::method() == 'POST')
+            {
+                $pass->background_color = $val->validated('background_color');
+                $pass->foreground_color = $val->validated('foreground_color');
+                $pass->label_color = $val->validated('label_color');
+
+                Session::set_flash('error', $val->error());
+            }
+
+            $this->template->set_global('pass', $pass, false);
+        }
+
+        $this->template->title = "Pass colors";
+        $this->template->set_safe('head', '<script type="text/javascript" src="' . \Fuel\Core\Uri::base() . 'assets/modcoder_excolor/jquery.modcoder.excolor.js"></script>');
+        $this->template->content = View::forge('admin/pass/colors');
+    }
+
+    public function action_fields($id, $type)
+    {
+        $pass = Model_Pass::find($id);
+
+        if (\Fuel\Core\Input::method() == 'POST')
+        {
+            if ($type == 'primary')
+            {
+                $pass->set_primary_field(\Fuel\Core\Input::post('label', ''), \Fuel\Core\Input::post('value', ''));
+                Session::set_flash('success', e('Added ' . $type . ' field.'));
+            }
+            else
+            {
+                $pass->set_field(Model_Field::string2type($type), \Fuel\Core\Input::post('key', ''), \Fuel\Core\Input::post('label', ''), \Fuel\Core\Input::post('value', ''), \Fuel\Core\Input::post('others', ''));
+                Session::set_flash('success', e('Added ' . $type . ' field.'));
+                \Fuel\Core\Response::redirect('admin/pass/fields/' . $pass->id . '/' . $type);
+            }
+        }
+
+        if ($type == 'primary')
+        {
+            $this->template->set_global('field', $pass->primary_field(), false);
+            $this->template->content = View::forge('admin/pass/primaryfields');
+        }
+        else
+        {
+            $this->template->set_global('fields', $pass->{$type . '_fields'}(), false);
+            $this->template->content = View::forge('admin/pass/fields');
+        }
+        $this->template->set_global('type', $type, false);
+        $this->template->set_global('pass', $pass, false);
+        $this->template->title = "Pass " . $type . ' fields';
+    }
+
+    public function action_delete_field($id)
+    {
+        if ($field = Model_Field::find($id))
+        {
+            $pass = $field->pass;
+            $type = Model_Field::type2string($field->type);
+
+            $field->delete();
+
+            Session::set_flash('success', e('Deleted field #' . $id));
+            Response::redirect('admin/pass/fields/' . $pass->id . '/' . $type);
+        }
+
+        else
+        {
+            Session::set_flash('error', e('Could not delete field #' . $id));
+            Response::redirect('admin/pass');
+        }
+    }
+
+    public function action_pkpass($id)
+    {
+        if ($pass = Model_Pass::find($id))
+        {
+            $manager = new Pass_File_Manager($pass);
+            if (file_exists($manager->pkpass_path()))
+            {
+                $pkpass = file_get_contents($manager->pkpass_path());
+                return Response::forge($pkpass, 200, array('Content-Type' => 'application/vnd.apple.pkpass'));
+            }
+            else
+            {
+                throw new \Fuel\Core\HttpNotFoundException;
+            }
+        }
+        else
+        {
+            throw new \Fuel\Core\HttpNotFoundException;
+        }
+    }
+
+}
