@@ -23,7 +23,7 @@ return array(
 	 *
 	 * Set this to null to have it automatically detected.
 	 */
-	'base_url'  => 'passcurrent.local',
+	'base_url'  => 'http://passcurrent.local/',
 
 	/**
 	 * url_suffix - Any suffix that needs to be added to
@@ -253,7 +253,9 @@ return array(
 		 * add it like 'session' => 'auth'.
 		 * If you don't want the config in a group use null as groupname.
 		 */
-		'config'  => array(),
+		'config'  => array(
+            'pass',
+        ),
 
 		/**
 		 * Language files to autoload
