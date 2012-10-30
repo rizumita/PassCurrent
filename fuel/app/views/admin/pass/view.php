@@ -19,28 +19,48 @@
 <?php endif; ?>
 
 <div class="container">
-    <button class="btn btn-large span2"
-            onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/cert/' . $pass->id); ?>';">
-        Certificate
-    </button>
+    <div class="row">
+        <button class="btn btn-large span2"
+                onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/cert/' . $pass->id); ?>';">
+            Certificate
+        </button>
 
-    <button class="btn btn-large span2"
-            onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/images/' . $pass->id); ?>';">Images
-    </button>
+        <button class="btn btn-large span2"
+                onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/images/' . $pass->id); ?>';">Images
+        </button>
 
-    <button class="btn btn-large span2"
-            onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/colors/' . $pass->id); ?>';">Colors
-    </button>
+        <button class="btn btn-large span2"
+                onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/colors/' . $pass->id); ?>';">Colors
+        </button>
 
-    <button class="btn btn-large span2"
-            onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/locations/' . $pass->id); ?>';">
-        Locations
-    </button>
+        <button class="btn btn-large span2"
+                onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/locations/' . $pass->id); ?>';">
+            Locations
+        </button>
+    </div>
 
-    <button class="btn btn-large span2"
-            onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/fields/' . $pass->id . '/primary'); ?>';">
-        Primary Fields
-    </button>
+    <h3>Fields</h3>
+    <div class="row">
+        <button class="btn btn-large span2"
+                onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/fields/' . $pass->id . '/primary'); ?>';">
+            Primary
+        </button>
+
+        <button class="btn btn-large span2"
+                onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/fields/' . $pass->id . '/secondary'); ?>';">
+            Secondary
+        </button>
+
+        <button class="btn btn-large span2"
+                onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/fields/' . $pass->id . '/auxiliary'); ?>';">
+            Auxiliary
+        </button>
+
+        <button class="btn btn-large span2"
+                onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/fields/' . $pass->id . '/back'); ?>';">
+            Back
+        </button>
+    </div>
 </div>
 
 <?php echo Html::anchor('admin/pass/edit/' . $pass->id, 'Edit'); ?> |

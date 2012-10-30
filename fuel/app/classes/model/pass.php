@@ -231,10 +231,7 @@ class Model_Pass extends \Orm\Model
 
     public function primary_field()
     {
-        $fields = array_filter($this->fields, function ($field)
-        {
-            return $field->type == Model_Field::PrimaryField;
-        });
+        $fields = $this->fields(Model_Field::PrimaryField);
 
         if (count($fields) > 0)
         {
@@ -246,4 +243,34 @@ class Model_Pass extends \Orm\Model
         }
     }
 
+    public function secondary_fields()
+    {
+        return $this->fields(Model_Field::SecondaryField);
+    }
+
+    public function auxiliary_fields()
+    {
+        return $this->fields(Model_Field::AuxiliaryField);
+    }
+
+    public function back_fields()
+    {
+        return $this->fields(Model_Field::BackField);
+    }
+
+    public function set_field($type, $key, $label, $value, $others)
+    {
+        $field = Model_Field::forge(array('type' => $type, 'key' => $key, 'label' => $label, 'value' => $value));
+        $field->set_others($others);
+        $this->fields[] = $field;
+        $this->save();
+    }
+
+    private function fields($type)
+    {
+        return array_filter($this->fields, function ($field) use ($type)
+        {
+            return $field->type == $type;
+        });
+    }
 }

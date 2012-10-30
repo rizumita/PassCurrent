@@ -353,22 +353,45 @@ class Controller_Admin_Pass extends Controller_Admin
             }
             else
             {
-                $pass->{'set_' . $type . '_field'}(\Fuel\Core\Input::post());
+                $pass->set_field(Model_Field::string2type($type), \Fuel\Core\Input::post('key', ''), \Fuel\Core\Input::post('label', ''), \Fuel\Core\Input::post('value', ''), \Fuel\Core\Input::post('others', ''));
                 Session::set_flash('success', e('Added ' . $type . ' field.'));
+                \Fuel\Core\Response::redirect('admin/pass/fields/' . $pass->id . '/' . $type);
             }
         }
 
         if ($type == 'primary')
         {
             $this->template->set_global('field', $pass->primary_field(), false);
+            $this->template->content = View::forge('admin/pass/primaryfields');
         }
         else
         {
             $this->template->set_global('fields', $pass->{$type . '_fields'}(), false);
+            $this->template->content = View::forge('admin/pass/fields');
         }
+        $this->template->set_global('type', $type, false);
         $this->template->set_global('pass', $pass, false);
         $this->template->title = "Pass " . $type . ' fields';
-        $this->template->content = View::forge('admin/pass/' . $type . 'fields');
+    }
+
+    public function action_delete_field($id)
+    {
+        if ($field = Model_Field::find($id))
+        {
+            $pass = $field->pass;
+            $type = Model_Field::type2string($field->type);
+
+            $field->delete();
+
+            Session::set_flash('success', e('Deleted field #' . $id));
+            Response::redirect('admin/pass/fields/' . $pass->id . '/' . $type);
+        }
+
+        else
+        {
+            Session::set_flash('error', e('Could not delete field #' . $id));
+            Response::redirect('admin/pass');
+        }
     }
 
 }
