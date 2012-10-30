@@ -17,6 +17,11 @@
     <strong>Barcode format:</strong>
     <?php echo $pass->barcode_format_readable(); ?></p>
 <?php endif; ?>
+<p>
+    <strong>Relevant date:</strong>
+    <?php if ($pass->relevant_date > 0) {
+    echo \Fuel\Core\Date::forge($pass->relevant_date)->format('mysql');
+} ?></p>
 
 <div class="container">
     <div class="row">
@@ -26,11 +31,13 @@
         </button>
 
         <button class="btn btn-large span2"
-                onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/images/' . $pass->id); ?>';">Images
+                onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/images/' . $pass->id); ?>';">
+            Images
         </button>
 
         <button class="btn btn-large span2"
-                onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/colors/' . $pass->id); ?>';">Colors
+                onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/colors/' . $pass->id); ?>';">
+            Colors
         </button>
 
         <button class="btn btn-large span2"
@@ -40,6 +47,7 @@
     </div>
 
     <h3>Fields</h3>
+
     <div class="row">
         <button class="btn btn-large span2"
                 onclick="location.href = '<?php echo \Fuel\Core\Uri::create('admin/pass/fields/' . $pass->id . '/primary'); ?>';">

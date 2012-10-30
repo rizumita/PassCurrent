@@ -16,6 +16,7 @@ class Model_Pass extends \Orm\Model
         'barcode_message',
         'barcode_format',
         'pkpass_name',
+        'relevant_date',
         'created_at',
         'updated_at',
     );
@@ -117,6 +118,10 @@ class Model_Pass extends \Orm\Model
                 'message' => $this->barcode_message,
                 'format' => $this->barcode_format(),
                 'messageEncoding' => 'UTF-8');
+        }
+
+        if ($this->relevant_date != 0){
+            $array['relevantDate'] = date('Y-m-d\TG:i:sP', $this->relevant_date);
         }
 
         return \Fuel\Core\Format::forge($array)->to_json();

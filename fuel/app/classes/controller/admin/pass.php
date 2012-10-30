@@ -27,12 +27,20 @@ class Controller_Admin_Pass extends Controller_Admin
 
             if ($val->run())
             {
+                $relevant_date = 0;
+                if (\Fuel\Core\Input::post('relevant_date', false))
+                {
+                    $relevant_date = \Fuel\Core\Date::create_from_string(\Fuel\Core\Input::post('relevant_date'))
+                        ->get_timestamp();
+                }
+
                 $pass = Model_Pass::forge(array(
                                                'name' => Input::post('name'),
                                                'description' => Input::post('description'),
                                                'logo_text' => Input::post('logo_text'),
                                                'barcode_message' => Input::post('barcode_message'),
                                                'barcode_format' => Input::post('barcode_format'),
+                                               'relevant_date' => $relevant_date,
                                           ));
 
                 if ($pass and $pass->save())
@@ -69,6 +77,15 @@ class Controller_Admin_Pass extends Controller_Admin
             $pass->logo_text = Input::post('logo_text');
             $pass->barcode_message = Input::post('barcode_message');
             $pass->barcode_format = Input::post('barcode_format');
+            $relevant_date = \Fuel\Core\Input::post('relevant_date', 0);
+            if ($relevant_date != 0)
+            {
+                $pass->relevant_date = \Fuel\Core\Date::create_from_string($relevant_date, 'mysql')->get_timestamp();
+            }
+            else
+            {
+                $pass->relevant_date = 0;
+            }
 
             if ($pass->save())
             {
@@ -92,6 +109,8 @@ class Controller_Admin_Pass extends Controller_Admin
                 $pass->logo_text = $val->validated('logo_text');
                 $pass->barcode_message = $val->validated('barcode_message');
                 $pass->barcode_format = $val->validated('barcode_format');
+                $pass->relevant_date = \Fuel\Core\Date::create_from_string($val->validated('relevant_date'), 'mysql')
+                    ->get_timestamp();
 
                 Session::set_flash('error', $val->error());
             }
@@ -399,10 +418,13 @@ class Controller_Admin_Pass extends Controller_Admin
         if ($pass = Model_Pass::find($id))
         {
             $manager = new Pass_File_Manager($pass);
-            if(file_exists($manager->pkpass_path())){
+            if (file_exists($manager->pkpass_path()))
+            {
                 $pkpass = file_get_contents($manager->pkpass_path());
                 return Response::forge($pkpass, 200, array('Content-Type' => 'application/vnd.apple.pkpass'));
-            }else{
+            }
+            else
+            {
                 throw new \Fuel\Core\HttpNotFoundException;
             }
         }
