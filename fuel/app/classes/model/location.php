@@ -39,7 +39,7 @@ class Model_Location extends \Orm\Model
 
     public function to_array()
     {
-        $array = array('latitude' => $this->latitude, 'longitude' => $this->longitude);
+        $array = array('latitude' => (double)$this->latitude, 'longitude' => (double)$this->longitude);
 
         if ($this->altitude != 0)
         {

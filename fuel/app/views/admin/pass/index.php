@@ -5,6 +5,7 @@
     <thead>
     <tr>
         <th>Name</th>
+        <th>Pass URL</th>
         <th>Status</th>
         <th>Action</th>
         <th></th>
@@ -16,12 +17,17 @@
 
         <td><?php echo $pass->name; ?></td>
         <?php $manager = new Pass_File_Manager($pass); ?>
-        <td><?php echo \Fuel\Core\Html::anchor($manager->pkpass_url(), $pass->status()); ?></td>
+        <td><?php echo $manager->pkpass_url(); ?></td>
+    <td><?php if (file_exists($manager->pkpass_path())): ?>
+        <?php echo \Fuel\Core\Html::anchor(\Fuel\Core\Uri::create('admin/pass/pkpass/' . $pass->id), $pass->status()); ?></td>
+            <?php else: ?>
+        <?php echo $pass->status(); ?>
+        <?php endif; ?>
         <td>
             <?php if (empty($pass->file_name)): ?>
             <?php echo \Fuel\Core\Form::open(array('action' => 'admin/pass/generate/' . $pass->id,
                                                    'method' => 'POST')); ?>
-            <?php echo \Fuel\Core\Form::hidden('cert_password', ''); ?>
+            <?php echo \Fuel\Core\Form::hidden('cert_password_' . $pass->id, ''); ?>
             <?php echo \Fuel\Core\Form::submit('submit', 'Generate', array('class' => 'btn',
                                                                            'onClick' => 'return generate_pkpass(' . $pass->id . ');')); ?>
             <?php else: ?>

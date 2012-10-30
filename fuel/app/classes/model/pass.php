@@ -74,14 +74,22 @@ class Model_Pass extends \Orm\Model
             'logoText' => $this->logo_text,
         );
 
-        if ($primary_field = $this->primary_field())
+        $array['coupon'] = array();
+
+        $set_coupon_fields = function ($fields, $fields_name) use (&$array)
         {
-            $array['coupon'] = array(
-                'primaryFields' => array(
-                    $primary_field->to_array(),
-                ),
-            );
-        }
+            if (count($fields) > 0)
+            {
+                $array['coupon'][$fields_name] = array_values(array_map(function ($field)
+                {
+                    return $field->to_array();
+                }, $fields));
+            }
+        };
+        $set_coupon_fields($this->primary_fields(), 'primaryFields');
+        $set_coupon_fields($this->secondary_fields(), 'secondaryFields');
+        $set_coupon_fields($this->auxiliary_fields(), 'auxiliaryFields');
+        $set_coupon_fields($this->back_fields(), 'backFields');
 
         if (!empty($this->foreground_color))
         {
@@ -164,16 +172,28 @@ class Model_Pass extends \Orm\Model
         $manager = new Pass_File_Manager($this);
         $cert = new Certificate($manager->file_path('certificate.p12'), $cert_password);
 
-        if ($manager->generate_file('pass.json', $this->pass_json($cert->pass_type_identifier(), $cert->team_identifier()))
-            && $manager->generate_file('manifest.json', $this->manifest($manager->files()))
-            && $manager->generate_file('signature', $cert->signature($manager->file_path('manifest.json'), $manager->file_path('signature')))
-            && $manager->generate_zip()
-        )
+        if (!$manager->generate_file('pass.json', $this->pass_json($cert->pass_type_identifier(), $cert->team_identifier())))
         {
-            return null;
+            return $manager->error;
+        }
+        if (!$manager->generate_file('manifest.json', $this->manifest($manager->files())))
+        {
+            return $manager->error;
+        }
+        if (!$signature = $cert->signature($manager->file_path('manifest.json'), $manager->file_path('signature')))
+        {
+            return $cert->error;
+        }
+        if (!$manager->generate_file('signature', $signature))
+        {
+            return $manager->error;
+        }
+        if (!$manager->generate_zip())
+        {
+            return $manager->error;
         }
 
-        return $manager->error;
+        return null;
     }
 
     public function manifest($files)
@@ -231,7 +251,7 @@ class Model_Pass extends \Orm\Model
 
     public function primary_field()
     {
-        $fields = $this->fields(Model_Field::PrimaryField);
+        $fields = $this->primary_fields();
 
         if (count($fields) > 0)
         {
@@ -241,6 +261,11 @@ class Model_Pass extends \Orm\Model
         {
             return null;
         }
+    }
+
+    public function primary_fields()
+    {
+        return $this->fields(Model_Field::PrimaryField);
     }
 
     public function secondary_fields()

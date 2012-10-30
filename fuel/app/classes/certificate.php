@@ -62,7 +62,15 @@ class Certificate
 
         if (file_exists(\Fuel\Core\Config::get('pass.WWDR_cert')))
         {
-            openssl_pkcs7_sign($manifest_path, $signature_path, $this->cert_data, $private_key, array(), PKCS7_BINARY | PKCS7_DETACHED, \Fuel\Core\Config::get('pass.WWDR_cert'));
+            try
+            {
+                openssl_pkcs7_sign($manifest_path, $signature_path, $this->cert_data, $private_key, array(), PKCS7_BINARY | PKCS7_DETACHED, \Fuel\Core\Config::get('pass.WWDR_cert'));
+            }
+            catch (Exception $e)
+            {
+                $this->error = 'Certificate error.';
+                return null;
+            }
         }
         else
         {

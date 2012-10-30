@@ -13,7 +13,7 @@ function generate_pkpass(id) {
         alert('Cancel to generate');
         return false;
     } else {
-        $('#form_cert_password').val(password);
+        $('#form_cert_password_'+ id).val(password);
         return true;
     }
 }

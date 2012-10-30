@@ -282,7 +282,7 @@ class Controller_Admin_Pass extends Controller_Admin
 
         if (!empty($pass))
         {
-            $error = $pass->generate(\Fuel\Core\Input::post('cert_password', ''));
+            $error = $pass->generate(\Fuel\Core\Input::post('cert_password_' . $pass->id, ''));
             if (empty($error))
             {
                 Session::set_flash('success', e('Generated pass #' . $id));
@@ -391,6 +391,24 @@ class Controller_Admin_Pass extends Controller_Admin
         {
             Session::set_flash('error', e('Could not delete field #' . $id));
             Response::redirect('admin/pass');
+        }
+    }
+
+    public function action_pkpass($id)
+    {
+        if ($pass = Model_Pass::find($id))
+        {
+            $manager = new Pass_File_Manager($pass);
+            if(file_exists($manager->pkpass_path())){
+                $pkpass = file_get_contents($manager->pkpass_path());
+                return Response::forge($pkpass, 200, array('Content-Type' => 'application/vnd.apple.pkpass'));
+            }else{
+                throw new \Fuel\Core\HttpNotFoundException;
+            }
+        }
+        else
+        {
+            throw new \Fuel\Core\HttpNotFoundException;
         }
     }
 
